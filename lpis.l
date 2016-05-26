@@ -1,5 +1,4 @@
 %{
-	#include "y.tab.h"
 	//void yyerror(char *);
 %}
 
@@ -22,6 +21,8 @@ read		"READ"
 write		"WRITE"
 string		"STRING"
 
+
+%option noyywrap
 %option yylineno
 
 %%
@@ -50,6 +51,3 @@ string		"STRING"
 
 %%
 
-int yywrap(){ 
-	return(1);
-}

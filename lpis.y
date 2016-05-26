@@ -18,10 +18,10 @@
 	int yylex();
 	int yylineno;
 
-	int yyerror(char *s) {
-    	fprintf(stderr, "%s, line %d\n", s, yylineno);
-    	return 0;
-	}
+    int yyerror(char *s) {
+        fprintf(stderr, "Erro na linha ( %d! ) %s\n", yylineno, s);
+        return 0;
+    }
 
 %}
 
@@ -107,14 +107,11 @@ ciclo 		:	WHILE '('cond')' instrucoes ENDWHILE
 
 #include "lex.yy.c"
 
-int yyerror(char *s) {
-	fprintf(stderr, "Erro na linha ( %d! ) %s\n", yylineno, s);
-	return 0;
-}
 
 int main(int argc, char* argv[]){
 
 
+    yyparse();
 	return 0;
 
 }
