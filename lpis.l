@@ -23,9 +23,11 @@ write		"WRITE"
 string		"STRING"
 
 
+
 %option yylineno
 
 %%
+
 [,()={}]            { return yytext[0]; }
 {inicio}			{ return INICIO; }
 {corpo}				{ return CORPO; }
@@ -51,7 +53,9 @@ string		"STRING"
 
 %%
 
+
 int yywrap(){ 
 	return(1);
 }
+
 
