@@ -22,6 +22,7 @@ read		"READ"
 write		"WRITE"
 string		"STRING"
 
+
 %option yylineno
 
 %%
@@ -53,3 +54,4 @@ string		"STRING"
 int yywrap(){ 
 	return(1);
 }
+

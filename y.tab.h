@@ -1,7 +1,7 @@
 #define num 257
 #define pal 258
-#define OP 259
-#define OPM 260
+#define OPM 259
+#define OP 260
 #define OPR 261
 #define INICIO 262
 #define CORPO 263
@@ -16,20 +16,15 @@
 #define INT 272
 #define ARRAY 273
 #define STRING 274
-
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
 #endif
-
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
-
 typedef union {
 	int vali;
-	char *vals;
+	char * vals;
 } YYSTYPE;
-
 #endif /* !YYSTYPE_IS_DECLARED */
-
 extern YYSTYPE yylval;

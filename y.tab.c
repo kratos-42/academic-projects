@@ -83,10 +83,13 @@
 	int yylex();
 	int yylineno;
 
+	int yyerror(char *s) {
+    	fprintf(stderr, "%s, line %d\n", s, yylineno);
+    	return 0;
+	}
 
 
-
-#line 90 "y.tab.c" /* yacc.c:339  */
+#line 93 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -163,12 +166,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 25 "lpis.y" /* yacc.c:355  */
+#line 28 "lpis.y" /* yacc.c:355  */
 
 	int vali;
 	char *vals;
 
-#line 172 "y.tab.c" /* yacc.c:355  */
+#line 175 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -185,7 +188,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 189 "y.tab.c" /* yacc.c:358  */
+#line 192 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -484,10 +487,10 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    40,    40,    40,    42,    43,    46,    47,    51,    53,
-      54,    57,    58,    59,    60,    61,    62,    63,    66,    67,
-      71,    72,    75,    76,    77,    78,    82,    83,    84,    85,
-      88,    89,    90,    91,    92,    95,    96,    99
+       0,    43,    43,    43,    45,    46,    49,    50,    54,    56,
+      57,    60,    61,    62,    63,    64,    65,    66,    69,    70,
+      74,    75,    78,    79,    80,    81,    85,    86,    87,    88,
+      91,    92,    93,    94,    95,    98,    99,   102
 };
 #endif
 
@@ -1313,31 +1316,31 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 40 "lpis.y" /* yacc.c:1646  */
+#line 43 "lpis.y" /* yacc.c:1646  */
     { fprintf(file,"INICIAR\n"); }
-#line 1319 "y.tab.c" /* yacc.c:1646  */
+#line 1322 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 40 "lpis.y" /* yacc.c:1646  */
+#line 43 "lpis.y" /* yacc.c:1646  */
     { fprintf(file,"FIM\n"); fclose(file); }
-#line 1325 "y.tab.c" /* yacc.c:1646  */
+#line 1328 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 46 "lpis.y" /* yacc.c:1646  */
+#line 49 "lpis.y" /* yacc.c:1646  */
     {tipo = inteiro;}
-#line 1331 "y.tab.c" /* yacc.c:1646  */
+#line 1334 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 47 "lpis.y" /* yacc.c:1646  */
+#line 50 "lpis.y" /* yacc.c:1646  */
     {tipo = vetor;}
-#line 1337 "y.tab.c" /* yacc.c:1646  */
+#line 1340 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1341 "y.tab.c" /* yacc.c:1646  */
+#line 1344 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1565,15 +1568,9 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 103 "lpis.y" /* yacc.c:1906  */
+#line 106 "lpis.y" /* yacc.c:1906  */
 
 
-#include "lex.yy.c"
-
-int yyerror(char *s) {
-	fprintf(stderr, "Erro na linha ( %d! ) %s\n", yylineno, s);
-	return 0;
-}
 
 int main(int argc, char* argv[]){
 

@@ -105,12 +105,6 @@ ciclo 		:	WHILE '('cond')' instrucoes ENDWHILE
 
 %%
 
-#include "lex.yy.c"
-
-int yyerror(char *s) {
-	fprintf(stderr, "Erro na linha ( %d! ) %s\n", yylineno, s);
-	return 0;
-}
 
 int main(int argc, char* argv[]){
 

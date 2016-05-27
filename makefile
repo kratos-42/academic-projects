@@ -3,8 +3,8 @@ FLEX = lpis.l
 EXECUTABLE = lpis
 CC = gcc
 
-all: y.tab.c lex.yy.c
-	$(CC) y.tab.c $(EXECUTABLE)
+all: lex.yy.c y.tab.c
+	$(CC) y.tab.c lex.yy.c -o $(EXECUTABLE)
 
 lex.yy.c: $(FLEX)
 	flex $(FLEX)
