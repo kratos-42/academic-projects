@@ -5,10 +5,14 @@
 #include <limits.h>
 #include <string.h>
 
+#include "hashtable.h"
+
+/*
+
 struct entry_s {
 	char *nome;
 	int tipo;
-    void* valor;
+    void *valor;
 	
 	struct entry_s *next;
 };
@@ -21,8 +25,7 @@ struct hashtable_s {
 };
 
 typedef struct hashtable_s hashtable_t;
-
-
+*/
 
 hashtable_t *ht_create (int size) {
 
@@ -55,7 +58,7 @@ int ht_hash (hashtable_t *hashtable, char *nome) {
 	unsigned long int hashval;
 	int i = 0;
 
-	
+
 	while (hashval < ULONG_MAX && i < strlen(nome)) {
 		hashval = hashval << 8;
 		hashval += nome[i];
@@ -66,7 +69,7 @@ int ht_hash (hashtable_t *hashtable, char *nome) {
 }
 
 
-entry_t *ht_newpair(char *nome, int tipo, void* valor) {
+entry_t *ht_newpair(char *nome, int tipo, int reg) {
 
 	entry_t *newpair;
 
@@ -78,12 +81,12 @@ entry_t *ht_newpair(char *nome, int tipo, void* valor) {
 		return NULL;
 	}
 
-	if ((newpair -> tipo = tipo) > 0) {
+	if ((newpair -> tipo = tipo) != 0 || tipo != 1 {
 		return NULL;
 	}
 
 
-	if ((newpair -> valor = valor) == NULL) {
+	if ((newpair -> registo = registo) == NULL) {
 		return NULL;
 	}
 
@@ -93,7 +96,7 @@ entry_t *ht_newpair(char *nome, int tipo, void* valor) {
 }
 
 /* Insert a nome-valor pair into a hash table. */
-void ht_set(hashtable_t *hashtable, char *nome, int tipo, void* valor) {
+int ht_set (hashtable_t *hashtable, char *nome, int tipo, int reg) {
 	int bin = 0;
 	entry_t *newpair = NULL;
 	entry_t *next = NULL;
@@ -105,36 +108,39 @@ void ht_set(hashtable_t *hashtable, char *nome, int tipo, void* valor) {
 
 	while (next != NULL && next -> nome != NULL && strcmp(nome, next -> nome) > 0) {
 		last = next;
-		next = next->next;
+		next = next -> next;
 	}
 
 	
 	if (next != NULL && next -> nome != NULL && strcmp(nome, next -> nome) == 0) {
 		free(next -> valor);
-		next -> valor = valor;
+		next ->;
+		next -> tipo = tipo;
 
 	} else {
-		newpair = ht_newpair(nome, tipo, valor);
+		newpair = ht_newpair(nome, tipo, reg);
 
 		/* We're at the start of the linked list in this bin. */
 		if( next == hashtable -> table[bin]) {
 			newpair -> next = next;
 			hashtable -> table[bin] = newpair;
-	
+
 		/* We're at the end of the linked list in this bin. */
 		} else if ( next == NULL ) {
 			last -> next = newpair;
-	
+		
 		/* We're in the middle of the list. */
 		} else  {
 			newpair -> next = next;
 			last -> next = newpair;
 		}
 	}
+
+	return ;
 }
 
 /* Retrieve a nome-valor pair from a hash table. */
-void* ht_get_valor(hashtable_t *hashtable, char *nome) {
+int ht_get_registo(hashtable_t *hashtable, char *nome) {
 	int bin = 0;
 	entry_t *pair;
 
@@ -151,7 +157,7 @@ void* ht_get_valor(hashtable_t *hashtable, char *nome) {
 		return NULL;
 
 	} else {
-		return pair -> valor;
+		return pair -> reg;
 	}
 	
 }
@@ -177,6 +183,29 @@ int ht_get_tipo(hashtable_t *hashtable, char *nome) {
 	}
 	
 }
+
+int ht_find(hashtable_t *hashtable, char *nome) {
+	int bin = 0;
+	entry_t *pair;
+
+	bin = ht_hash(hashtable, nome);
+
+	/* Step through the bin, looking for our valor. */
+	pair = hashtable -> table[bin];
+	while (pair != NULL && pair -> nome != NULL && strcmp(nome, pair -> nome) > 0) {
+		pair = pair -> next;
+	}
+
+	/* Did we actually find anything? */
+	if (pair == NULL || pair -> nome == NULL || strcmp(nome, pair -> nome) != 0) {
+		return 0;
+
+	} else {
+		return 1;
+	}
+	
+}
+
 
 
 /*
