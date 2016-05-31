@@ -81,12 +81,11 @@ entry_t *ht_newpair(char *nome, int tipo, int reg) {
 		return NULL;
 	}
 
-	if ((newpair -> tipo = tipo) != 0 || tipo != 1 {
+	if ((newpair -> tipo = tipo) != 0 || tipo != 1) {
 		return NULL;
 	}
 
-
-	if ((newpair -> registo = registo) == NULL) {
+	if ((newpair -> reg = reg) < 0) {
 		return NULL;
 	}
 
@@ -96,7 +95,7 @@ entry_t *ht_newpair(char *nome, int tipo, int reg) {
 }
 
 /* Insert a nome-valor pair into a hash table. */
-int ht_set (hashtable_t *hashtable, char *nome, int tipo, int reg) {
+void ht_set (hashtable_t *hashtable, char *nome, int tipo, int reg) {
 	int bin = 0;
 	entry_t *newpair = NULL;
 	entry_t *next = NULL;
@@ -113,9 +112,8 @@ int ht_set (hashtable_t *hashtable, char *nome, int tipo, int reg) {
 
 	
 	if (next != NULL && next -> nome != NULL && strcmp(nome, next -> nome) == 0) {
-		free(next -> valor);
-		next ->;
 		next -> tipo = tipo;
+		next -> reg = reg;
 
 	} else {
 		newpair = ht_newpair(nome, tipo, reg);
@@ -135,8 +133,6 @@ int ht_set (hashtable_t *hashtable, char *nome, int tipo, int reg) {
 			last -> next = newpair;
 		}
 	}
-
-	return ;
 }
 
 /* Retrieve a nome-valor pair from a hash table. */
@@ -154,7 +150,7 @@ int ht_get_registo(hashtable_t *hashtable, char *nome) {
 
 	/* Did we actually find anything? */
 	if (pair == NULL || pair -> nome == NULL || strcmp(nome, pair -> nome) != 0) {
-		return NULL;
+		return -1;
 
 	} else {
 		return pair -> reg;

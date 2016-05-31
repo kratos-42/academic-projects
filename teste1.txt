@@ -1,30 +1,28 @@
 INICIO
 
-INT A
-ARRAY B(3)
-INT A
+    INT A
+    ARRAY B(3)
 
 CORPO
 
-IF ( (I << 2) && (A >> 2)) 
-	B(2) = 5 + 4
+    IF ( (I << 2) && (A >> 2)) 
 
-WHILE(4 +1)
-	A = 2
-	A = A + 1
+        B(2) = 5 + 4
 
-	IF ( 2 + 3)
-		B = 4
+        WHILE(4 +1)
+            A = 2
+            A = A + 1
 
-	ENDIF
+            IF ( 2 + 3)
+                B = 4
+            ENDIF
 
-ENDWHILE
+        ENDWHILE
 
-ELSE 
+    ELSE 
+        A = 1
 
-	A = 1
+    ENDIF
 
-
-ENDIF
 
 FIM
