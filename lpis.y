@@ -14,6 +14,7 @@
     };
 
     struct Variavel *vars = NULL;
+    struct Variavel *var = NULL;
 
     void add_var(char *name, int tipo, int registo) {
         struct Variavel *var;
@@ -42,7 +43,7 @@
     #define vetor   2
 
 
-    FILE *FF;
+    FILE *file;
     char *varAtual;
 
     int f;
@@ -61,7 +62,6 @@
         return 0;
     }
 
-    struct Variavel* var;
 
 %}
 
@@ -73,18 +73,18 @@
 
 
 %token <vali> num 
-%token <vals> pal OP OPM OPR STRING 
+%token <vals> pal STRING 
 %token INICIO CORPO IF ENDIF WHILE ENDWHILE ELSE WRITE READ INT ARRAY FIM
 
 
 
 %%
 
-programa    :   INICIO                                  {FF = fopen("log.txt", "w");}
-                declaracoes                             { fprintf(FF,"INICIAR\n"); } 
+programa    :   INICIO                                  {file = fopen("log.txt", "w"); fprintf(file,"INICIAR\n");}
+                declaracoes                             
                 CORPO   
                 instrucoes  
-                FIM                                     { fprintf(FF,"FIM\n"); fclose(FF); }   
+                FIM                                     { fprintf(file,"FIM\n"); fclose(file); }   
 
 declaracoes : 
             |   declaracoes  declaracao 
@@ -95,10 +95,10 @@ declaracao  :   INT  {tipo = inteiro;} var
             ;   
 
 var         :   pal                                     { varAtual = $1; 
-                                                          if (var = find_var(varAtual)) { 
+                                                          if (find_var(varAtual)) { 
                                                               yyerror("A variável já foi declarada!"); exit(0);
                                                           } else { 
-                                                              add_var(varAtual, tipo, registo);  fprintf(FF, "PUSHN %d\n", registo++);
+                                                              add_var(varAtual, tipo, registo);  fprintf(file, "PUSHN %d\n", registo++);
                                                           }}
                                                         
 instrucoes  :    
@@ -108,49 +108,84 @@ instrucoes  :
 instrucao   :   atribuicao                              { ; }
             |   condicao                                { ; }
             |   ciclo                                   { ; }
-            |   READ '(' pal ')'                        
-            |   READ '(' pal '(' expressao ')' ')'      /*{aux=ht_find(ht,$3); if(aux==0) {yyerror("A variável não foi declarada"); exit(0);} 
-                                                                            else        {registo=ht_get_registo(ht, $3); fprintf(FF, "PUSH\n PUSHI %d\nPADD\n", registo);}
-                                                        } */                           
+            |   READ '(' pal ')'                        { if (find_var(varAtual)) { 
+                                                              yyerror("A variável não foi declarada!"); exit(0); 
+                                                        } else { 
+                                                            add_var(varAtual, tipo, registo); fprintf(file,"READ\nATOI\nSTOREG %d\n",registo++);} }
+            |   READ '(' pal '(' expressao ')' ')'      { if (find_var(varAtual)) {
+                                                              yyerror("A variável não foi declarada"); exit(0);
+                                                        } else {
+                                                              registo=var->registo; fprintf(file, "PUSH\n PUSHI %d\nPADD\n", registo);}
+                                                        }                            
             |   WRITE '(' expressao ')'
             |   WRITE '(' STRING ')'     
             ;
 
-atribuicao  :   pal '=' expressao                       { }
-            |   pal '(' expressao ')' '=' expressao                 
+atribuicao  :   pal '=' expressao                       { if (find_var(varAtual)) {
+                                                                yyerror("A variável não foi declarada!"); exit(0); 
+                                                        }  else { 
+                                                                add_var(varAtual, tipo, registo); fprintf(file,"STOREG %d\n",registo);} 
+                                                        }
+            |   pal                                     { if (var=find_var(varAtual)) { 
+                                                                yyerror("A variável não foi declarada!"); exit(0); 
+                                                            } else { 
+                                                                tipo= var -> tipo; if(tipo!=vetor) { yyerror("A variável não é um array!"); exit(0);} 
+                                                                    else { registo=var->registo; fprintf(file,"PUSHGP\nPUSHI %d\nPADD\n",registo); } } }
+                '(' expressao ')' '=' expressao         { fprintf(file,"STOREN\n"); } 
+                                                                        
             ;
 
 
-cond        :   expressao                   
-            |   expressao OPR expressao
-            |   expressao ""
+cond        :   expressao                               { ; }
+            |   expressao '<' expressao                 { fprintf(file,"INF\n"); }
+            |   expressao '>' expressao                 { fprintf(file,"SUP\n"); }
+            |   expressao '>''=' expressao              { fprintf(file,"SUPEQ\n"); }
+            |   expressao '<''=' expressao              { fprintf(file,"INFEQ\n"); }
+            |   expressao '=''=' expressao              { fprintf(file,"INFEQ\n"); }
+            |   expressao '!''=' expressao              { fprintf(file,"EQUAL\nNOT\n"); }          
             ;
 
-expressao   :   termo                       
-            |   expressao '+' termo 
-            |   expressao '-' termo     
-            |   expressao '|''|' termo
+expressao   :   termo                                   { ; }
+            |   expressao '+' termo                     { fprintf(file,"ADD\n"); }
+            |   expressao '-' termo                     { fprintf(file,"SUB\n"); }
+            |   expressao '|''|' termo                  { fprintf(file,"ADD\n"); }
             ;
 
 
-termo       :   fator                       
-            |   termo '*' fator
-            |   termo '/' fator
-            |   termo '&''&' fator              
+termo       :   fator                                   { ; }
+            |   termo '*' fator                         { fprintf(file,"MUL\n"); }
+            |   termo '/' fator                         { fprintf(file,"DIV\n"); }
+            |   termo '&''&' fator                      { fprintf(file,"MUL\n"); }
             ;
 
-fator       :   pal     
-            |   pal '(' expressao ')'                                                       
-            |   num             
+fator       :   pal                                     { if (var=find_var(varAtual)) {
+                                                                yyerror("A variável não foi declarada!"); exit(0); 
+                                                            } else { 
+                                                                registo=var->registo; fprintf(file,"LOADG %d\n",registo);}
+                                                        } 
+            |   pal                                     { if (var=find_var(varAtual)) { 
+                                                                yyerror("A variável não foi declarada!"); exit(0); 
+                                                            } else { 
+                                                                tipo=var->tipo; if(tipo!=vetor) { yyerror("A variável não é um array!"); exit(0);} 
+                                                                    else { registo=var->registo; fprintf(file,"PUSHGP\nPUSHI %d\nPADD\n",registo);} } }
+                '(' expressao ')'                       { fprintf(file,"LOADN\n");}                                    
+            |   num                                     { fprintf(file,"PUSHI %d\n",$1); }                                    
             |   '(' cond ')'
-            |   '!' fator               
+            |   '!' fator                               { ; }             
             ;
 
-condicao    :   IF '(' cond ')'   instrucoes   ENDIF    
-            |   IF '(' cond ')'   instrucoes   ELSE instrucoes  ENDIF 
+condicao    :   IF '(' cond ')'                         //{ fprintf(file,"JZ eif%d\n",cont);}  
+                instrucoes                              
+                ENDIF    
+            |   IF '(' cond ')'   instrucoes            //{ fprint(file, "JZ lab%d\n",cont);}
+                    ELSE instrucoes  
+                ENDIF 
             ;
 
-ciclo       :   WHILE '('cond')' instrucoes ENDWHILE 
+ciclo       :   WHILE                                   //{ fprintf(file,"iwhl%d: NOP\n",cont);} 
+                '('cond')'                              //{ fprintf(file,"JZ fwhl%d\n",cont); } 
+                instrucoes 
+                ENDWHILE                                //{ fprintf(file,"JUMP iwhl%d\nfwhl%d: NOP\n",cont,cont++);}
             ;
 
 

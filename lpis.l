@@ -5,7 +5,6 @@
 
 num         [0-9]+
 pal         [a-zA-Z]+
-opR         ">>"|"<<"|">="|"<="|"=="|"!="
 inicio      "INICIO"
 corpo       "CORPO"
 fim         "FIM" 
@@ -36,7 +35,6 @@ string      "STRING"
 {fimCond}           { return ENDIF; }
 {ciclo}             { return WHILE; }
 {fimciclo}          { return ENDWHILE; }
-{opR}               { yylval.vals = strdup(yytext);return (OPR); }
 {vetor}             { yylval.vals = strdup(yytext);return (ARRAY);}
 {inteiro}           { yylval.vals = strdup(yytext);return (INT);}
 {read}              { return (READ);}
