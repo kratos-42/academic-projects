@@ -81,7 +81,7 @@ entry_t *ht_newpair(char *nome, int tipo, int reg) {
 		return NULL;
 	}
 
-	if ((newpair -> tipo = tipo) != 0 || tipo != 1) {
+	if ((newpair -> tipo = tipo) != 2 && tipo != 1) {
 		return NULL;
 	}
 
@@ -110,14 +110,13 @@ void ht_set (hashtable_t *hashtable, char *nome, int tipo, int reg) {
 		next = next -> next;
 	}
 
-	
 	if (next != NULL && next -> nome != NULL && strcmp(nome, next -> nome) == 0) {
 		next -> tipo = tipo;
 		next -> reg = reg;
-
+	
 	} else {
-		newpair = ht_newpair(nome, tipo, reg);
 
+		newpair = ht_newpair(nome, tipo, reg);
 		/* We're at the start of the linked list in this bin. */
 		if( next == hashtable -> table[bin]) {
 			newpair -> next = next;
@@ -126,7 +125,6 @@ void ht_set (hashtable_t *hashtable, char *nome, int tipo, int reg) {
 		/* We're at the end of the linked list in this bin. */
 		} else if ( next == NULL ) {
 			last -> next = newpair;
-		
 		/* We're in the middle of the list. */
 		} else  {
 			newpair -> next = next;
@@ -194,10 +192,10 @@ int ht_find(hashtable_t *hashtable, char *nome) {
 
 	/* Did we actually find anything? */
 	if (pair == NULL || pair -> nome == NULL || strcmp(nome, pair -> nome) != 0) {
-		return 0;
+		return 1;
 
 	} else {
-		return 1;
+		return 0;
 	}
 	
 }
