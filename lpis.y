@@ -63,9 +63,12 @@ declaracao  :   INT  {tipo = inteiro;} var
 
 
 var         :   pal                                     { 
-                                                          varAtual = $1; printf("%d\n", ht_find(ht, varAtual)); 
-                                                          if (ht_find(ht, varAtual)) { yyerror("A variável já foi declarada!"); exit(0); }
-                                                          else { ht_set(ht, varAtual, tipo, registo);  fprintf(FF, "PUSHN %d\n", registo++);} }
+                                                          /* varAtual = $1; printf("%d\n", ht_find(ht, varAtual)); */ 
+                                                          varAtual = $1; ht_find(ht, varAtual);
+                                                          if (ht_find(ht, varAtual)) { 
+                                                                yyerror("A variável já foi declarada!"); exit(0); }
+                                                          else { 
+                                                                ht_set(ht, varAtual, tipo, registo);  fprintf(FF, "PUSHN %d\n", registo++);} }
                                                         
 instrucoes  :    
             |   instrucoes  instrucao                   { ; }
