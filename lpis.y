@@ -15,7 +15,7 @@
     int aux;
  
     int registo = 0;
-    int tipo;
+    int tipo = 0;
    
 
     hashtable_t *ht;
@@ -57,14 +57,15 @@ declaracoes :
             |   declaracoes  declaracao 
             ;
 
-declaracao  :   INT var                                 {tipo = inteiro;}
-            |   ARRAY var '(' num ')'                   {tipo = vetor;}
+declaracao  :   INT  {tipo = inteiro;} var                                
+            |   ARRAY  {tipo = vetor;} var '(' num ')'                  
             ;   
 
 
-var         :   pal                                     { varAtual = $1; aux = ht_set(ht, varAtual, tipo, registo); 
-                                                          if (aux == -1) { yyerror("A variável já foi declarada!"); exit(0); }
-                                                          else {fprintf(FF, "PUSHN %d\n", registo++);} }
+var         :   pal                                     { 
+                                                          varAtual = $1; printf("%d\n", ht_find(ht, varAtual)); 
+                                                          if (ht_find(ht, varAtual)) { yyerror("A variável já foi declarada!"); exit(0); }
+                                                          else { ht_set(ht, varAtual, tipo, registo);  fprintf(FF, "PUSHN %d\n", registo++);} }
                                                         
 instrucoes  :    
             |   instrucoes  instrucao                   { ; }
@@ -74,14 +75,14 @@ instrucao   :   atribuicao                              { ; }
             |   condicao                                { ; }
             |   ciclo                                   { ; }
             |   READ '(' pal ')'                        
-            |   READ '(' pal '[' expressao ']' ')'      {aux=ht_find(ht,$3); if(aux==0) {yyerror("A variável não foi declarada"); exit(0);} 
-                                                                            else       {registo=ht_set(ht, $3, tipo, NULL);}
-                                                        }                            
+            |   READ '(' pal '(' expressao ')' ')'      /*{aux=ht_find(ht,$3); if(aux==0) {yyerror("A variável não foi declarada"); exit(0);} 
+                                                                            else        {registo=ht_get_registo(ht, $3); fprintf(FF, "PUSH\n PUSHI %d\nPADD\n", registo);}
+                                                        } */                           
             |   WRITE '(' expressao ')'
             |   WRITE '(' STRING ')'     
             ;
 
-atribuicao  :   pal '=' expressao           
+atribuicao  :   pal '=' expressao                       { }
             |   pal '(' expressao ')' '=' expressao                 
             ;
 
