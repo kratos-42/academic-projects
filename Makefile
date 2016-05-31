@@ -3,12 +3,8 @@ FLEX = lpis.l
 EXECUTABLE = lpis
 CC = gcc
 
-
-all: lex.yy.c y.tab.c hashtable.o
-	$(CC) hashtable.o y.tab.c lex.yy.c -o $(EXECUTABLE) 
-
-hashtable.o: hashtable.c
-	$(CC) hashtable.c -c
+all: lex.yy.c y.tab.c 
+	$(CC) -g y.tab.c lex.yy.c -o $(EXECUTABLE) 
 
 lex.yy.c: $(FLEX)
 	flex $(FLEX)

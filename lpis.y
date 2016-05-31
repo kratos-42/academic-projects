@@ -1,8 +1,42 @@
 %{
+
     #include <stdio.h>
     #include <string.h>
-    #include "hashtable.h"
     #include <stdlib.h>
+    #include "uthash.h"
+
+    struct Variavel {
+        char name[100];
+        int tipo;
+        int registo;
+
+        UT_hash_handle hh;
+    };
+
+    struct Variavel *vars = NULL;
+
+    void add_var(char *name, int tipo, int registo) {
+        struct Variavel *var;
+
+        HASH_FIND_STR(vars, name, var);
+        if (var == NULL) {
+            var = malloc(sizeof(struct Variavel));
+            strcpy(var -> name, name);
+            var -> tipo = tipo;
+            var -> registo = registo;
+
+            HASH_ADD_STR(vars, name, var);  
+        }
+    }
+
+
+    struct Variavel *find_var(char* name) {
+        struct Variavel *var;
+
+        HASH_FIND_STR(vars, name, var);
+        return var;
+    }
+
     
     #define inteiro 1
     #define vetor   2
@@ -18,7 +52,6 @@
     int tipo = 0;
    
 
-    hashtable_t *ht;
 
     int yylex();
     int yylineno;
@@ -28,6 +61,7 @@
         return 0;
     }
 
+    struct Variavel* var;
 
 %}
 
@@ -46,8 +80,7 @@
 
 %%
 
-programa    :   INICIO                                  {FF = fopen("log.txt", "w");
-                                                         ht = ht_create( 65536 );} 
+programa    :   INICIO                                  {FF = fopen("log.txt", "w");}
                 declaracoes                             { fprintf(FF,"INICIAR\n"); } 
                 CORPO   
                 instrucoes  
@@ -61,14 +94,12 @@ declaracao  :   INT  {tipo = inteiro;} var
             |   ARRAY  {tipo = vetor;} var '(' num ')'                  
             ;   
 
-
-var         :   pal                                     { 
-                                                          /* varAtual = $1; printf("%d\n", ht_find(ht, varAtual)); */ 
-                                                          varAtual = $1; ht_find(ht, varAtual);
-                                                          if (ht_find(ht, varAtual)) { 
-                                                                yyerror("A variável já foi declarada!"); exit(0); }
-                                                          else { 
-                                                                ht_set(ht, varAtual, tipo, registo);  fprintf(FF, "PUSHN %d\n", registo++);} }
+var         :   pal                                     { varAtual = $1; 
+                                                          if (var = find_var(varAtual)) { 
+                                                              yyerror("A variável já foi declarada!"); exit(0);
+                                                          } else { 
+                                                              add_var(varAtual, tipo, registo);  fprintf(FF, "PUSHN %d\n", registo++);
+                                                          }}
                                                         
 instrucoes  :    
             |   instrucoes  instrucao                   { ; }
