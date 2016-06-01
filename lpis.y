@@ -124,7 +124,7 @@ instrucao   :   atribuicao                              { ; }
                                                         } else {
                                                               fprintf(file, "push\n pushi %d\npadd\n", var -> registo);} //
                                                         }                            
-            |   WRITE '(' expressao ')'
+            |   WRITE '(' expressao ')'     
             |   WRITE '(' STRING ')'     
             ;
 
@@ -132,8 +132,14 @@ atribuicao  :   pal '=' expressao                       {  varAtual = $1;
                                                            if (!(var = find_var(varAtual))) {
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
                                                         }  else { 
-                                                                fprintf(file,"storeg %d\n", var -> registo);} 
-                                                        }
+                                                                tipo = var -> tipo;
+                                                                if(tipo != inteiro){
+                                                                    yyerror("A variável não é um inteiro"); exit(0);}
+                                                                else {
+                                                                    fprintf(file,"storeg %d\n", var -> registo);
+                                                                } 
+                                                        } } 
+
             |   pal                                     {   varAtual = $1;
                                                             if (!(var=find_var(varAtual))) { 
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
@@ -173,16 +179,24 @@ termo       :   fator                                   { ; }
             |   termo '&''&' fator                      { fprintf(file,"mul\n"); }
             ;
 
-fator       :   pal                                     { if (!(var = find_var(varAtual))) {
+fator       :   pal                                     { varAtual = $1;
+                                                          if (!(var = find_var(varAtual))) {
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
                                                             } else { 
-                                                                fprintf(file,"pushg\nloadg %d\n", var -> registo);}
-                                                        } 
-            |   pal                                     { if (!(var = find_var(varAtual))) { 
+                                                                tipo = var -> tipo;
+                                                                if(tipo != inteiro){
+                                                                    yyerror("A variável não é um inteiro"); exit(0);}
+                                                                
+                                                                else {
+                                                                    fprintf(file,"pushg\nloadg %d\n", var -> registo);}
+                                                        } }
+            |   pal                                     { varAtual = $1;  
+                                                          if (!(var = find_var(varAtual))) { 
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
                                                             } else { 
                                                                 tipo = var -> tipo; 
                                                                 if (tipo != vetor) { 
+                                                                     printf("%d\n", tipo); fflush(stdout);
                                                                     yyerror("A variável não é um array!"); exit(0);
                                                                 }  else { 
                                                                     fprintf(file,"pushgp\npushi %d\npadd\n", var -> registo);} } }
@@ -200,7 +214,8 @@ condicao    :   IF '(' cond ')'                         { fprintf(file,"jz els%d
 else       :    ELSE instrucoes ENDIF                   { fprintf(file, "els%d:\nnop\n", contIf); contIf++;} 
            |    ENDIF                                   { fprintf(file, "els%d:\nnop\n", contIf); contIf++;} 
 
-ciclo       :   WHILE                                   { fprintf(file,"iwhl%d:\nnop\n", contWh); } 
+ciclo       :   WHILE                                   { fprintf(file,"iwhl%d:\nnop\n", contWh);}
+                                              
                 '(' cond ')'                            { fprintf(file,"jz fwhl%d\n", contWh); } 
                         instrucoes 
                 ENDWHILE                                { fprintf(file,"jump iwhl%d\nfwhl%d:\nnop\n", contWh, contWh); contWh++;}
