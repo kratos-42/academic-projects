@@ -52,7 +52,8 @@
 
     int f;
     int aux;
-    int cont = 0;
+    int contIf = 0;
+    int contWh = 0;
  
     int registo = 0;
     int tipo = 0;
@@ -85,7 +86,7 @@
 
 %%
 
-programa    :   INICIO                                  {file = fopen("log.txt", "w"); fprintf(file,"start\n");}
+programa    :   INICIO                                  {file = fopen("out.wm", "w"); fprintf(file,"start\n");}
                 declaracoes                             
                 CORPO   
                 instrucoes  
@@ -103,11 +104,11 @@ var         :   pal                                     { varAtual = $1;
                                                           if (find_var(varAtual)) { 
                                                               yyerror("A variável já foi declarada!"); exit(0);
                                                           } else { 
-                                                              add_var(varAtual, tipo, registo);  fprintf(file, "pushn %d\n", registo++);
+                                                              add_var(varAtual, tipo, registo++); 
                                                           }}
                                                         
 instrucoes  :    
-            |   instrucoes  instrucao  ';'               { ; }
+            |   instrucao  ';' instrucoes               { ; }
             ;
 
 instrucao   :   atribuicao                              { ; }
@@ -129,7 +130,6 @@ instrucao   :   atribuicao                              { ; }
 
 atribuicao  :   pal '=' expressao                       {  varAtual = $1; 
                                                            if (!(var = find_var(varAtual))) {
-                                                                printf("%s\n", var -> name); fflush(stdout);
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
                                                         }  else { 
                                                                 fprintf(file,"storeg %d\n", var -> registo);} 
@@ -176,7 +176,7 @@ termo       :   fator                                   { ; }
 fator       :   pal                                     { if (!(var = find_var(varAtual))) {
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
                                                             } else { 
-                                                                fprintf(file,"loadg %d\n", var -> registo);}
+                                                                fprintf(file,"pushg\nloadg %d\n", var -> registo);}
                                                         } 
             |   pal                                     { if (!(var = find_var(varAtual))) { 
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
@@ -192,22 +192,19 @@ fator       :   pal                                     { if (!(var = find_var(v
             |   '!' fator                               { ; }             
             ;
 
-condicao    :   IF '(' cond ')'                         { fprintf(file,"jz eif%d\n",cont);}  
+condicao    :   IF '(' cond ')'                         { fprintf(file,"jz els%d\n",contIf);}  
                     instrucoes                              
-                ENDIF                                   { fprintf(file, "eif%d:k\nnop\n", cont);}
-            |   IF '(' cond ')'   
-                    instrucoes                          { fprintf(file, "jz els%d\n",cont);}
-                ELSE                                    { fprintf(file, "els%d:\nnop\n", cont);}
-                    instrucoes  
-                ENDIF 
+                else
             ;
 
-ciclo       :   WHILE                                   { fprintf(file,"iwhl%d:\nnop\n", cont); } 
-                '(' cond ')'                            { fprintf(file,"jz fwhl%d\n", cont); } 
-                instrucoes 
-                ENDWHILE                                { fprintf(file,"jump iwhl%d\nfwhl%d:\nnop\n", cont, cont++);}
-            ;
+else       :    ELSE instrucoes ENDIF                   { fprintf(file, "els%d:\nnop\n", contIf); contIf++;} 
+           |    ENDIF                                   { fprintf(file, "els%d:\nnop\n", contIf); contIf++;} 
 
+ciclo       :   WHILE                                   { fprintf(file,"iwhl%d:\nnop\n", contWh); } 
+                '(' cond ')'                            { fprintf(file,"jz fwhl%d\n", contWh); } 
+                        instrucoes 
+                ENDWHILE                                { fprintf(file,"jump iwhl%d\nfwhl%d:\nnop\n", contWh, contWh); contWh++;}
+            ; 
 
 %%
 

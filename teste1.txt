@@ -1,28 +1,23 @@
 INICIO
 
-    INT A
-    ARRAY B(3)
+    INT FIBZ
+    INT FIBU
+
+    INT TMP
 
 CORPO
 
-    IF ( (I << 2) && (A >> 2)) 
+    FIBZ = 0;
+    FIBU = 1;
 
-        B(2) = 5 + 4
 
-        WHILE(4 +1)
-            A = 2
-            A = A + 1
+    WHILE(FIBU < 1000)
+        TMP = FIBU;
 
-            IF ( 2 + 3)
-                B = 4
-            ENDIF
+        FIBU = FIBZ + FIBU;
+        FIBZ = FIBU;
 
-        ENDWHILE
-
-    ELSE 
-        A = 1
-
-    ENDIF
+    ENDWHILE;
 
 
 FIM
