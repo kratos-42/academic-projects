@@ -107,13 +107,14 @@ var         :   pal                                     { varAtual = $1;
                                                           }}
                                                         
 instrucoes  :    
-            |   instrucoes  instrucao                   { ; }
+            |   instrucoes  instrucao  ';'               { ; }
             ;
 
 instrucao   :   atribuicao                              { ; }
             |   condicao                                { ; }
             |   ciclo                                   { ; }
-            |   READ '(' pal ')'                        { if (!(var = find_var(varAtual))) { 
+            |   READ '(' pal ')'                        { varAtual = $3;
+                                                          if (!(var = find_var(varAtual))) { 
                                                               yyerror("A variável não foi declarada!"); exit(0); 
                                                         } else { 
                                                               fprintf(file,"read\natoi\nstoreg %d\n", var -> registo);} }
@@ -126,16 +127,19 @@ instrucao   :   atribuicao                              { ; }
             |   WRITE '(' STRING ')'     
             ;
 
-atribuicao  :   pal '=' expressao                       { if (var = find_var(varAtual)) {
+atribuicao  :   pal '=' expressao                       {  varAtual = $1; 
+                                                           if (!(var = find_var(varAtual))) {
+                                                                printf("%s\n", var -> name); fflush(stdout);
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
                                                         }  else { 
-                                                                fprintf(file,"storeg %d\n",var -> registo);} 
+                                                                fprintf(file,"storeg %d\n", var -> registo);} 
                                                         }
-            |   pal                                     { if (var=find_var(varAtual)) { 
+            |   pal                                     {   varAtual = $1;
+                                                            if (!(var=find_var(varAtual))) { 
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
 
                                                             } else { 
-                                                                tipo= var -> tipo;
+                                                                tipo = var -> tipo;
                                                                 if(tipo != vetor) { 
                                                                         yyerror("A variável não é um array!"); exit(0);} 
                                                                     else {  
@@ -169,12 +173,12 @@ termo       :   fator                                   { ; }
             |   termo '&''&' fator                      { fprintf(file,"mul\n"); }
             ;
 
-fator       :   pal                                     { if (var = find_var(varAtual)) {
+fator       :   pal                                     { if (!(var = find_var(varAtual))) {
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
                                                             } else { 
                                                                 fprintf(file,"loadg %d\n", var -> registo);}
                                                         } 
-            |   pal                                     { if (var = find_var(varAtual)) { 
+            |   pal                                     { if (!(var = find_var(varAtual))) { 
                                                                 yyerror("A variável não foi declarada!"); exit(0); 
                                                             } else { 
                                                                 tipo = var -> tipo; 
