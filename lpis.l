@@ -26,7 +26,7 @@ string      "STRING"
 
 %%
 
-[\&\|,()=+\-*/<>]   { return yytext[0]; }
+[\&\|,()=+\-*/<>;]   { return yytext[0]; }
 {inicio}            { return INICIO; }
 {corpo}             { return CORPO; }
 {fim}               { return FIM; }
