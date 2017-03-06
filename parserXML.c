@@ -1,8 +1,8 @@
-#include "xmlParser.h"
+#include "parserXML.h"
 
 void load_scene(char* filename);
 
-char** getModels(char* filename) {
+char** read3DFiles(char* filename) {
 
     xmlDocPtr doc;  
     xmlNodePtr node;

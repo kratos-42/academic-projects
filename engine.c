@@ -11,7 +11,7 @@ float yy = 0;
 float zz = 0;
 float angle = 0;
 
-char* filename = "plano.3d";
+char* filename = "box.3d";
 
 void changeSize(int w, int h){
 	
@@ -40,7 +40,7 @@ void draw(void){
 	glBegin(GL_TRIANGLES);
 
 	while(r != -1){
-		r = fscanf(f, "%f, %f, %f", &x, &y, &z);
+		r = fscanf(f, "%f %f %f", &x, &y, &z);
 		if (r == 3){
 			glVertex3f(x, y, z);
 		} else {
@@ -60,7 +60,7 @@ void renderScene(void){
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glLoadIdentity();
-	gluLookAt(0.0f, 100.0f, 100.0f,
+	gluLookAt(0.0f, 5.0f, 100.0f,
 		  0.0f, 0.0f, 0.0f,
 		  0.0f, 1.0f, 0.0f);
 
@@ -73,25 +73,27 @@ void renderScene(void){
 
 void keyFunc(unsigned char key, int x, int y){
 
+	int speed = 10;
+
 	switch(key){
 	
 		case 'a' :
-			xx -= 0.1;
+			xx -= 0.1*speed;
 			break;
 		case 'w' :
-			yy -=0.1;
+			yy -=0.1*speed;
 			break;
 		case 's' : 
-			yy += 0.1;
+			yy += 0.1*speed;
 			break;
 		case 'd' :
-			xx += 0.1;
+			xx += 0.1*speed;
 			break;
 		case 'e' :
-			angle += 10;
+			angle += 10*speed;
 			break;
 		case 'q' :
-			angle -= 10;
+			angle -= 10*speed;
 			break;
 		default:
 			break;
