@@ -1,10 +1,8 @@
 #include "parserXML.h"
 
-void load_scene(char* filename);
-
 char** read3DFiles(char* filename) {
 
-    xmlDocPtr doc;  
+    xmlDocPtr doc;
     xmlNodePtr node;
     xmlChar *modelFile;
     xmlAttrPtr attr;
@@ -26,8 +24,8 @@ char** read3DFiles(char* filename) {
         xmlFreeDoc(doc);
         return NULL;
     }
-    
-    filenames = malloc(sizeof(char*) * 1024); 
+
+    filenames = malloc(sizeof(char*) * 1024);
 
     node = node->xmlChildrenNode;
     while (node != NULL) {
@@ -44,9 +42,9 @@ char** read3DFiles(char* filename) {
 
     /*free the document */
     xmlFreeDoc(doc);
-    xmlCleanupParser(); 
+    xmlCleanupParser();
 
     filenames[n] = NULL;
 
     return filenames;
-} 
+}
