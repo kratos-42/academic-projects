@@ -300,7 +300,7 @@ void create_cone(double raio, double altura, double cmdv, double cmdh, char* fil
     printf("\nplane <comprimento> <largura> <nº camada horizontais> <nº camadas verticais>  <filename>\n");
     printf("\nbox <comprimento> <largura> <altura> <nº camadas horizontais> <nº camadas verticais> <nº camadas laterais> <filename>\n");
     printf("\nsphere <raio> <nº camadas horizontais> <nº camadas verticais> <filename>\n");
-    printf("\ncone <raio> <nº camadas horizontais> <nº camadas verticais> <filename>\n");
+    printf("\ncone <raio> <altura> <nº camadas horizontais> <nº camadas verticais> <filename>\n");
 
   }  
   return 0;
