@@ -1,0 +1,20 @@
+#ifndef _MAIN
+#define _MAIN
+
+#define _USE_MATH_DEFINES
+
+#include <stdlib.h>
+#include <GL/glut.h>
+#include <math.h>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
+#include "tinyxml2.h"
+#include "group.h"
+
+
+using namespace tinyxml2;
+using namespace std;
+
+#endif

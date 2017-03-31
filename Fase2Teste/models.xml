@@ -1,0 +1,8 @@
+<scene X="ola"> 
+	<group X="adeus">
+		<group X="adeus">
+			<model file="sphere.3d" /> 
+		</group>
+		<model file="sphere.3d" /> 
+	</group>
+</scene> 
