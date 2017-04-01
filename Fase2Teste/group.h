@@ -7,10 +7,13 @@
 #endif
 
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <string>
+
 #include "rotacao.h"
 #include "translacao.h"
 #include "escala.h"
-#include <string>
 
 using namespace std;
 
@@ -19,21 +22,22 @@ class Group{
 	Translacao trans;
 	Escala esc;
 	vector<Group> groups;
-	vector<string> modelos;
-
-
+	vector<string> modelosNames;
+    vector<vector<float>> modelos;
 
 public:
 	Group();
 	Group(Translacao, Rotacao, Escala, vector<Group>);
+	~Group() {};
 	Translacao getTranslacao() { return trans; }
 	Rotacao getRotacao() { return rot; }
 	Escala getEscala() { return esc; }
 	void setTranslacao(Translacao t){ trans = t; }
 	void setRotacao(Rotacao r){ rot = r; }
 	void setEscala(Escala e){ esc = e; }
-	void addModel(string m){ modelos.push_back(m); }
-	void draw(string filename);
-	virtual ~Group() {};
+	void addModel(string m){ modelosNames.push_back(m); }
+    void loadModels();
+    void print();
+
 };
 

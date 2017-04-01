@@ -1,7 +1,24 @@
-
 #include "engine.h"
 
 char* filenames[10];
+
+void draw_group(Group g){
+    glPushMatrix();
+    glRotatef(g.getRotate().getAngle(), r.getRotate().getX(), r.getRotate().getY(), r.getRotate().getZ());
+    glTranslatef(g.getTranslacao().getX(), r.getTranslacao().getY(), r.getTranslacao().getZ());
+    glScalef(r.getScale().getX(), r.getScale().getY(), r.getScale().getZ());
+
+    for(auto it: g.getModels()){
+        for(int i = 0; i < it.size(); i +=3){
+            glVertex3f(it[i], it[i + 1], it[i + 2]);
+        }
+    }
+    for(auto it: g.getGroups()){
+        draw_group(it);
+    }
+
+    glPopMatrix();
+}
 
 //read xml file.
 /*void read3DFiles(char* filename) {
@@ -241,7 +258,7 @@ void renderScene(void){
 	glRotatef(angle, 0, 1, 0);
 	glTranslatef(xx, yy, zz);
 
-	
+    /* draw_group(); */
 
 	//for(int i = 0; filenames[i] != NULL; i++){
 	//	draw(filenames[i]);	
@@ -250,7 +267,6 @@ void renderScene(void){
 }
 
 void keyFunc(unsigned char key, int x, int y){
-
 	int speed = 1;
 
 	switch(key){
@@ -284,8 +300,6 @@ void keyFunc(unsigned char key, int x, int y){
 }
 
 void specialKeyFunc(int key, int x, int y){
-
-
 	switch(key){
 		case GLUT_KEY_UP:
 			zz -= 0.1;
@@ -300,10 +314,6 @@ void specialKeyFunc(int key, int x, int y){
 }
 
 
-
-
-
-
 int main(int argc, char **argv){
 
 	float x, y, z;
@@ -311,6 +321,7 @@ int main(int argc, char **argv){
 
 	
 	readXMLFile(xmlfile);
+	/* readXMLFile(argv[1]); */
 	//init GLUT and the Window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);

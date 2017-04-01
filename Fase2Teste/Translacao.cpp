@@ -1,4 +1,4 @@
-#include "translacao.h"
+#include "Translacao.h"
 
 Translacao::Translacao(){
 	x = 0.0;
@@ -10,4 +10,11 @@ Translacao::Translacao(float a, float b, float c){
 	x = a;
 	y = b;
 	z = c;
+}
+
+
+void Translacao::print(){
+    cout << "Translacao(" << x << ", "
+                          << y << ", "
+                          << z << endl;
 }

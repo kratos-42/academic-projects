@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>
-//#include "Ponto.h"
+#include <iostream>
+
+using namespace std;
 
 class Translacao{
 	float x;
@@ -11,11 +12,12 @@ class Translacao{
 public:
 	Translacao();
 	Translacao(float, float, float);
+	~Translacao() {};
 	float getTransx() { return x; }
 	float getTransy() { return y; }
 	float getTransz() { return z; }
 	void setTransx(float a) { x = a; }
 	void setTransy(float b) { y = b; }
 	void setTransz(float c) { z = c; }
-	virtual ~Translacao() {};
+	void print();
 };
