@@ -9,7 +9,7 @@ Group::Group(Translacao tr, Rotacao rt, Escala escala, vector<Group> gr, vector<
 	rot = rt;
 	esc = esc;
 	groups = gr;
-	modelos = m;
+	modelosNames = m;
 }
 
 
@@ -30,6 +30,7 @@ void Group::loadModels(){
         }
         modelos.push_back(vs);
     }
+}
 
 
 void Group::print(){

@@ -13,9 +13,9 @@ public:
 	Translacao();
 	Translacao(float, float, float);
 	~Translacao() {};
-	float getTransx() { return x; }
-	float getTransy() { return y; }
-	float getTransz() { return z; }
+	float getX() { return x; }
+	float getY() { return y; }
+	float getZ() { return z; }
 	void setTransx(float a) { x = a; }
 	void setTransy(float b) { y = b; }
 	void setTransz(float c) { z = c; }

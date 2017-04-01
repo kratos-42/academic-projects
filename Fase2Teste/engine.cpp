@@ -4,9 +4,9 @@ char* filenames[10];
 
 void draw_group(Group g){
     glPushMatrix();
-    glRotatef(g.getRotate().getAngle(), r.getRotate().getX(), r.getRotate().getY(), r.getRotate().getZ());
-    glTranslatef(g.getTranslacao().getX(), r.getTranslacao().getY(), r.getTranslacao().getZ());
-    glScalef(r.getScale().getX(), r.getScale().getY(), r.getScale().getZ());
+    glRotatef(g.getRotacao().getAngulo(), g.getRotacao().getX(), g.getRotacao().getY(), g.getRotacao().getZ());
+    glTranslatef(g.getTranslacao().getX(), g.getTranslacao().getY(), g.getTranslacao().getZ());
+    glScalef(g.getEscala().getX(), g.getEscala().getY(), g.getEscala().getZ());
 
     for(auto it: g.getModels()){
         for(int i = 0; i < it.size(); i +=3){
