@@ -3,12 +3,15 @@
 Group::Group(){
 }
 
-Group::Group(Translacao tr, Rotacao rt, Escala escala, vector<Group> gr){
-    trans = tr;
-    rot = rt;
-    esc = esc;
-    groups = gr;
+Group::Group(Translacao tr, Rotacao rt, Escala escala, vector<Group> gr, vector<string> m){
+
+	trans = tr;
+	rot = rt;
+	esc = esc;
+	groups = gr;
+	modelos = m;
 }
+
 
 void Group::loadModels(){
     float x, y, z;
@@ -27,7 +30,6 @@ void Group::loadModels(){
         }
         modelos.push_back(vs);
     }
-}
 
 
 void Group::print(){
