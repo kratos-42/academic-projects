@@ -127,12 +127,15 @@ void parseGroup(XMLElement* grupo, Group gr){
    	int i = 0;
    	for(transform = transform -> FirstChildElement("model"); transform; transform = transform -> NextSiblingElement()){
    		gr.addModel(transform -> Attribute("file"));
-   		vector<string> m = gr.getModels();
-   		cout << m[i++] << endl;
+   		//vector<string> m = gr.getModels();
+   		//cout << m[i++] << endl;
+
    	}
    	
    	for(transform = grupo -> FirstChildElement(); transform; transform = transform -> NextSiblingElement()){
 
+   		cout << transform -> Value() << endl;
+   		
    		if(strcmp(transform -> Value(), "translate") == 0){
 	   		if(transform -> Attribute("X")) 
 	   			transX = stof(transform->Attribute("X"));
