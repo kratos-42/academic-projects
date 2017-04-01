@@ -8,12 +8,10 @@ if (NOT APPLE)
 		set(TOOLKITS_FOLDER "" CACHE PATH "Path to toolkits folder")
 		include_directories(
 			${TOOLKITS_FOLDER}/glew
-			${TOOLKITS_FOLDER}/glut
-			${TOOLKITS_FOLDER}/devil)
+			${TOOLKITS_FOLDER}/glut)
 		link_directories(
 			${TOOLKITS_FOLDER}/glew
-			${TOOLKITS_FOLDER}/glut
-			${TOOLKITS_FOLDER}/devil)
+			${TOOLKITS_FOLDER}/glut)
 	else(WIN32)
 		find_package(GLEW REQUIRED)
 		include_directories(${GLEW_INCLUDE_DIRS})
@@ -26,10 +24,6 @@ if (NOT WIN32)
 	include_directories(${GLUT_INCLUDE_DIR})
 	link_directories(${GLUT_LIBRARY_DIRS})
 	add_definitions(${GLUT_DEFINITIONS})
-
-	find_package(DevIL REQUIRED)
-	link_libraries(${IL_LIBRARIES} )
-	include_directories(§{IL_INCLUDE_DIR})
 endif(NOT WIN32)	
 	
 find_package(OpenGL REQUIRED)
@@ -41,10 +35,9 @@ add_executable(${PROJECT_NAME} engine.cpp Translacao.cpp Rotacao.cpp group.cpp t
 
 
 if (WIN32)
-	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} glut32 glew32 DevIL)
+	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} glut32 glew32)
 	file(COPY ${TOOLKITS_FOLDER}/glew/glew32.dll DESTINATION ${CMAKE_BINARY_DIR})
 	file(COPY ${TOOLKITS_FOLDER}/glut/glut32.dll DESTINATION ${CMAKE_BINARY_DIR})
-	file(COPY ${TOOLKITS_FOLDER}/devil/DevIL.dll DESTINATION ${CMAKE_BINARY_DIR})
 
 else(WIN32)
 	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})

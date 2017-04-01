@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+
+using namespace std;
+
 class Rotacao{
 	float angulo;
 	float x;
@@ -8,7 +12,8 @@ class Rotacao{
 
 public:
 	Rotacao();
-	Rotacao(float, float, float, float);
+	Rotacao(float angle, float x, float y, float z);
+	~Rotacao() {};
 	float getAngulo() { return angulo; }
 	float getX() { return x; }
 	float getY() { return y; }
@@ -17,5 +22,5 @@ public:
 	void setX(float a){ x = a; }
 	void setY(float b){ y = b; }
 	void setZ(float c){ z = c; }
-	virtual ~Rotacao() {};
+    void print();
 };

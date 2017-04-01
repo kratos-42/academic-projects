@@ -13,7 +13,6 @@
 #include "tinyxml2.h"
 #include "group.h"
 
-
 using namespace tinyxml2;
 using namespace std;
 

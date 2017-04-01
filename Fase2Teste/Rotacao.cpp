@@ -1,4 +1,4 @@
-#include "rotacao.h"
+#include "Rotacao.h"
 
 Rotacao::Rotacao(){
 	angulo = 0.0;
@@ -13,4 +13,11 @@ Rotacao::Rotacao(float a, float b, float c, float d){
 	x = b;
 	y = c;
 	z = d;
+}
+
+void Rotacao::print(){
+    cout << "Rotacao(" << angulo << ", "
+                       << x << ", "
+                       << y << ", "
+                       << z << endl;
 }
