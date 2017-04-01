@@ -35,7 +35,7 @@ endif(NOT WIN32)
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
 link_directories(${OpenGL_LIBRARY_DIRS})
-add_definitions(${OpenGL_DEFINITIONS} -fpermissive -g)
+add_definitions(${OpenGL_DEFINITIONS} -fpermissive)
 
 add_executable(${PROJECT_NAME} engine.cpp Translacao.cpp Rotacao.cpp group.cpp tinyxml2.cpp Escala.cpp)
 

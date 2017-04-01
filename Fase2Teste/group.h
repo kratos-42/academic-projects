@@ -11,6 +11,7 @@
 #include "translacao.h"
 #include "escala.h"
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -25,13 +26,16 @@ class Group{
 
 public:
 	Group();
-	Group(Translacao, Rotacao, Escala, vector<Group>);
+	Group(Translacao, Rotacao, Escala, vector<Group>, vector<string>);
 	Translacao getTranslacao() { return trans; }
 	Rotacao getRotacao() { return rot; }
 	Escala getEscala() { return esc; }
+	vector<Group> getGroups(){ return groups;}
+	vector<string> getModels(){ return modelos;}
 	void setTranslacao(Translacao t){ trans = t; }
 	void setRotacao(Rotacao r){ rot = r; }
 	void setEscala(Escala e){ esc = e; }
+	void addGroup(Group g){ groups.push_back(g);}
 	void addModel(string m){ modelos.push_back(m); }
 	void draw(string filename);
 	virtual ~Group() {};

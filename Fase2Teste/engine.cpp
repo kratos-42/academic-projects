@@ -117,111 +117,115 @@ void parseGroup(XMLElement* grupo, Group gr){
     	  transX, transY, transZ, 
     	  escX, escY, escZ;
 
+
    	angle1 = rotX = rotY = transX = transY = transZ = escX = escY = escZ = 1;
 
- 	glPushMatrix();
-
-   	if(strcmp(grupo -> FirstChildElement() -> Value(), "grupo") == 0)
-   		grupo = grupo -> FirstChildElement();
-
-   	XMLElement* transform = grupo -> FirstChildElement();
-
-   	for(transform; (strcmp(transform -> Value(), "translate") == 0); transform = transform -> NextSiblingElement()){
-   		if(transform -> Attribute("X")) 
-   			transX = stof(transform->Attribute("X"));
-			else transX = 0;
-
-		if (transform->Attribute("Y")) 
-			transY = stof(transform->Attribute("Y"));
-			else transY = 0;
-		
-		if (transform->Attribute("Z")) 
-			transZ = stof(transform->Attribute("Z"));
-			else transZ = 0;
-
-		tr = Translacao(transX, transY, transZ);
-		gr.setTranslacao(tr);
+ 
    	
+    XMLElement* transform = grupo -> FirstChildElement("models");
+    
+   	int i = 0;
+   	for(transform = transform -> FirstChildElement("model"); transform; transform = transform -> NextSiblingElement()){
+   		gr.addModel(transform -> Attribute("file"));
+   		vector<string> m = gr.getModels();
+   		cout << m[i++] << endl;
+   	}
+   	
+   	for(transform = grupo -> FirstChildElement(); transform; transform = transform -> NextSiblingElement()){
 
-   	if (strcmp(transform -> Value(), "rotate") == 0){
-			if (transform -> Attribute("angle")) 
-				angle1 = stof(transform -> Attribute("angle"));
-				else angle1 = 0;
-			
-			if (transform -> Attribute("X")) 
-				rotX = stof(transform -> Attribute("X"));
-				else rotX = 0;
-			
-			if (transform -> Attribute("Y")) 
-				rotY = stof(transform -> Attribute("Y"));
-				else rotY = 0;
-			
-			if (transform -> Attribute("Z")) 
-				rotZ = stof(transform -> Attribute("Z"));
-				else rotZ = 0;
+   		if(strcmp(transform -> Value(), "translate") == 0){
+	   		if(transform -> Attribute("X")) 
+	   			transX = stof(transform->Attribute("X"));
+				else transX = 0;
 
-			rot = Rotacao(angle1, rotX, rotY, rotZ);
-			gr.setRotacao(rot);
+			if (transform->Attribute("Y")) 
+				transY = stof(transform->Attribute("Y"));
+				else transY = 0;
+			
+			if (transform->Attribute("Z")) 
+				transZ = stof(transform->Attribute("Z"));
+				else transZ = 0;
+
+			tr = Translacao(transX, transY, transZ);
+			gr.setTranslacao(tr);
+   		}
+
+   		if (strcmp(transform -> Value(), "rotate") == 0){
+				if (transform -> Attribute("angle")) 
+					angle1 = stof(transform -> Attribute("angle"));
+					else angle1 = 0;
+				
+				if (transform -> Attribute("X")) 
+					rotX = stof(transform -> Attribute("X"));
+					else rotX = 0;
+				
+				if (transform -> Attribute("Y")) 
+					rotY = stof(transform -> Attribute("Y"));
+					else rotY = 0;
+				
+				if (transform -> Attribute("Z")) 
+					rotZ = stof(transform -> Attribute("Z"));
+					else rotZ = 0;
+
+				rot = Rotacao(angle1, rotX, rotY, rotZ);
+				gr.setRotacao(rot);
+			}
+
+
+		if (strcmp(transform -> Value(), "scale") == 0){
+				if (transform->Attribute("X")) 
+					escX = stof(transform -> Attribute("X"));
+					else escX = 1;
+				
+				if (transform -> Attribute("Y")) 
+					escY = stof(transform -> Attribute("Y"));
+					else escY = 1;
+				
+				if (transform -> Attribute("Z")) 
+					escZ = stof(transform -> Attribute("Z"));
+					else escZ = 1;
+				
+				escala.setX(escX);
+				escala.setY(escY);
+				escala.setZ(escZ);
+				gr.setEscala(escala);
+			}
+
+		if(strcmp(transform -> Value(), "group") == 0){
+			vector<string> m;
+			vector<Group> g;
+			Group(tr, rot, escala, g, m);
+			parseGroup(transform -> FirstChildElement("group"), gr);
+			}
 		}
 
-
-	if (strcmp(transform -> Value(), "scale") == 0){
-			if (transform->Attribute("X")) 
-				escX = stof(transform -> Attribute("X"));
-				else escX = 1;
-			
-			if (transform -> Attribute("Y")) 
-				escY = stof(transform -> Attribute("Y"));
-				else escY = 1;
-			
-			if (transform -> Attribute("Z")) 
-				escZ = stof(transform -> Attribute("Z"));
-				else escZ = 1;
-			
-			escala.setX(escX);
-			escala.setY(escY);
-			escala.setZ(escZ);
-			gr.setEscala(escala);
-		}
-	}
-
-	if(grupo){
-			XMLElement* model = grupo -> FirstChildElement("models") -> FirstChildElement("model");
-			cout << model->Attribute("file") << endl;
-	 
-	}
-	
-	else printf("%s\n","deu" );
-	/*for(XMLElement* model = grupo -> FirstChildElement("models") -> FirstChildElement("model");
-		model;
-		model = model -> NextSiblingElement("model")){
-		
-		printf("%d\n", i++);
-		cout << model->Attribute("file") << endl;
-		gr.addModel(model->Attribute("file"));
-	}*/
-}		
-
+{}}
 
 void readXMLFile(string file){
 
 	XMLDocument doc;
 	doc.LoadFile(file.c_str());
 
-
 	XMLElement* scene = doc.FirstChildElement("scene");
-	cout << scene -> Attribute("X") << endl;
+	//cout << scene -> Attribute("X") << endl;
+	
 	XMLElement* group = scene -> FirstChildElement("group");
-	cout << group -> Attribute("X") << endl;
-	XMLElement* model = group -> FirstChildElement("models");
-	cout << model -> Attribute("X") << endl;
-	printf("%s\n", "fodeu" );
+
+	//XMLElement* model = group -> FirstChildElement("models");
+	//cout << model -> Attribute("X") << endl;
+	//XMLElement* smodel = model -> FirstChildElement("model");
+	//cout << smodel -> Attribute("file") << endl;
+
 
 	Group grupo = Group();
 	Escala esc;
+
 	esc = Escala(1,1,1);
 	grupo.setEscala(esc);
+	vector<Group> vGroups;
+	grupo.addGroup(grupo); 
 	parseGroup(group, grupo);
+	printf("%s\n", "chegou");
 }
 
 
