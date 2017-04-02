@@ -14,6 +14,7 @@
 #include "Rotacao.h"
 #include "Translacao.h"
 #include "Escala.h"
+#include "Model.h"
 
 using namespace std;
 
@@ -22,25 +23,24 @@ class Group{
 	Translacao trans;
 	Escala esc;
 	vector<Group> groups;
-	vector<string> modelosNames;
-    vector<vector<float>> modelos;
+    vector<Model> models;
 
 
 public:
 	Group();
-	Group(Translacao, Rotacao, Escala, vector<Group>, vector<string>);
+	Group(Translacao, Rotacao, Escala, vector<Group>);
 	~Group() {};
 	Translacao getTranslacao() { return trans; }
 	Rotacao getRotacao() { return rot; }
 	Escala getEscala() { return esc; }
 	vector<Group> getGroups(){ return groups;}
-	vector<vector<float>> getModels(){ return modelos;}
+	//vector<vector<float>> getModels(){ return modelos;}
 	void setTranslacao(Translacao t){ trans = t; }
 	void setRotacao(Rotacao r){ rot = r; }
 	void setEscala(Escala e){ esc = e; }
 	void addGroup(Group g){ groups.push_back(g);}
-	void addModel(string m){cout << modelosNames.size() << endl; modelosNames.push_back(m); }
-	//vector<string> getModels(string s){ return modelosNames;}
+	void addModel(string s){ Model m = Model(s); m.loadModel(); models.push_back(m);}
+	vector<Model> getModels(){ return models;}
     void loadModels();
     void print();
 };

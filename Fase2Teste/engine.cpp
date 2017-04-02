@@ -348,7 +348,11 @@ int main(int argc, char **argv){
 	float x, y, z;
 	x = y = z = 0;
 
-	
+	if(argc =! 2){
+		return 0;
+	}
+
+	string xmlfile = argv[1];
 	readXMLFile(xmlfile);
 	//ggroup.print();
 	
