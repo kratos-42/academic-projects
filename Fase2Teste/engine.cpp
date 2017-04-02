@@ -11,11 +11,14 @@ void draw_group(Group g){
     glScalef(g.getEscala().getX(), g.getEscala().getY(), g.getEscala().getZ());
 
     glBegin(GL_TRIANGLES);
-    for(auto it: g.getModels()){
-        for(int i = 0; i < it.size(); i +=3){
-        	//printf("%s\n", "cria vertices");
-            glVertex3f(it[i], it[i + 1], it[i + 2]);
-        }
+    for(Model it: g.getModels()){
+    	auto v = it.getPontos();
+		for(int i = 0; i < v.size(); i +=3){
+	        	//printf("%s\n", "cria vertices");
+	            glVertex3f(v[i], v[i + 1], v[i + 2]);
+	            
+	        }
+       
     }
     glEnd();
     for(auto it: g.getGroups()){
@@ -223,16 +226,12 @@ void parseGroup(XMLElement* grupo, Group& gr){
 
 		if(strcmp(transform -> Value(), "models") == 0){
 			XMLElement* transform2 = transform -> FirstChildElement();
-			
 
 			while(transform2 && strcmp(transform2 -> Value(), "model") == 0){
-				
-				gr.addModel(transform2 -> Attribute("file"));
-				cout << transform2 -> Attribute("file") << endl;	
-				transform2 = transform2 -> NextSiblingElement();
-
-				
+				gr.addModel(transform2 -> Attribute("file"));	
+				transform2 = transform2 -> NextSiblingElement();	
 			}
+
 			/*for(transform2 = transform -> FirstChildElement(); transform2; transform2 = transform2 -> NextSiblingElement()){	
    				//gr.addModel(transform2 -> Attribute("file"));
    				cout << transform -> Attribute("file") << endl;
@@ -248,9 +247,6 @@ void parseGroup(XMLElement* grupo, Group& gr){
 			gr.addGroup(g);
 		}
 	}
-
-	gr.print();
-
 }
 
 void readXMLFile(string file){
@@ -270,9 +266,7 @@ void readXMLFile(string file){
 	//cout << smodel -> Attribute("file") << endl;
 
 	parseGroup(group, ggroup);
-	//cout << group -> Value() << endl;
-	ggroup.print();
-	ggroup.loadModels();
+
 
 }
 
@@ -286,7 +280,7 @@ void renderScene(void){
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glLoadIdentity();
-	gluLookAt(0.0f, 3.0f, 10.0f,
+	gluLookAt(0.0f, 3.0f, 30.0f,
 			0.0f, 0.0f, 0.0f,
 			0.0f, 1.0f, 0.0f);
 
