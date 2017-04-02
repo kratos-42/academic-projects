@@ -15,7 +15,8 @@ Group::Group(Translacao tr, Rotacao rt, Escala escala, vector<Group> gr, vector<
 
 void Group::loadModels(){
     float x, y, z;
-
+    cout << modelosNames.size() << endl;
+    cout << groups.size() << endl;
     for(int i = 0; i < modelosNames.size(); i++){
         vector<float> vs;
         ifstream ifile(modelosNames[i]);
@@ -30,6 +31,7 @@ void Group::loadModels(){
         }
         modelos.push_back(vs);
     }
+
 }
 
 
@@ -37,6 +39,11 @@ void Group::print(){
     trans.print();
     rot.print();
     esc.print();
+    for(int i = 0; i < modelos.size(); i++){
+    	cout << modelosNames[i] << ": " << modelos[i].size() << endl;
+
+    	
+    }
     for(auto g: groups)
         g.print();
 }

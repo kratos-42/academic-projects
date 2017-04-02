@@ -16,5 +16,5 @@ Escala::Escala(float a, float b, float c){
 void Escala::print(){
     cout << "Escala(" << x << ", "
                       << y << ", "
-                      << z << endl;
+                       << z << ") " << endl;
 }

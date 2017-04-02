@@ -25,6 +25,7 @@ class Group{
 	vector<string> modelosNames;
     vector<vector<float>> modelos;
 
+
 public:
 	Group();
 	Group(Translacao, Rotacao, Escala, vector<Group>, vector<string>);
@@ -38,7 +39,8 @@ public:
 	void setRotacao(Rotacao r){ rot = r; }
 	void setEscala(Escala e){ esc = e; }
 	void addGroup(Group g){ groups.push_back(g);}
-	void addModel(string m){ modelosNames.push_back(m); }
+	void addModel(string m){cout << modelosNames.size() << endl; modelosNames.push_back(m); }
+	//vector<string> getModels(string s){ return modelosNames;}
     void loadModels();
     void print();
 };

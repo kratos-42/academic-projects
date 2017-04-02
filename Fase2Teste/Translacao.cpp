@@ -16,5 +16,5 @@ Translacao::Translacao(float a, float b, float c){
 void Translacao::print(){
     cout << "Translacao(" << x << ", "
                           << y << ", "
-                          << z << endl;
+                      	  << z << ") " << endl;
 }

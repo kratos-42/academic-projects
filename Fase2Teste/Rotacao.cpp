@@ -19,5 +19,5 @@ void Rotacao::print(){
     cout << "Rotacao(" << angulo << ", "
                        << x << ", "
                        << y << ", "
-                       << z << endl;
+                       << z << ") " << endl;
 }
