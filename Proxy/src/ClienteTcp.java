@@ -1,5 +1,3 @@
-import com.sun.security.ntlm.Client;
-
 import javax.sound.sampled.Line;
 import javax.xml.crypto.Data;
 import java.io.*;
@@ -26,8 +24,8 @@ public class ClienteTcp extends Thread {
             Thread cliente = new Thread(new Thread_ClienteTCP(serverInput));
             cliente.start();
             //le as mensagens do user e envia para o Servidor
-            run = userInput.readLine()
-            while (!(run.equals("Logout")) {
+            run = userInput.readLine();
+            while (!(run.equals("Logout"))) {
                 output.println(run);
                 output.flush();
             }
@@ -37,3 +35,4 @@ public class ClienteTcp extends Thread {
             socket.close();
         }
     }
+}
