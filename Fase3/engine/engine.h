@@ -13,6 +13,7 @@
 #include <vector>
 #include "tinyxml2.h"
 #include "group.h"
+#include "Ponto.h"
 
 using namespace tinyxml2;
 using namespace std;

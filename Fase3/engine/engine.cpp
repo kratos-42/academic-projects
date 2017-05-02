@@ -61,8 +61,17 @@ void changeSize(int w, int h){
 void draw_group(Group g){
     glPushMatrix();
     glRotatef(g.getRotacao().getAngulo(), g.getRotacao().getX(), g.getRotacao().getY(), g.getRotacao().getZ());
-    glTranslatef(g.getTranslacao().getX(), g.getTranslacao().getY(), g.getTranslacao().getZ());
     glScalef(g.getEscala().getX(), g.getEscala().getY(), g.getEscala().getZ());
+    if(g.getTranslacao().getTime() != 0){
+    	vector<Ponto> vp = g.getTranslacao().getPontosCurva();
+    	//glTranslatef(vp[0].getX(), vp[0].getY(), vp[0].getZ());
+    }
+    else{
+    	glTranslatef(g.getTranslacao().getX(), g.getTranslacao().getY(), g.getTranslacao().getZ());
+    
+	}
+	
+	cout << "merda" << endl;  
 
     //glBegin(GL_TRIANGLES);
 
@@ -82,7 +91,7 @@ void draw_group(Group g){
 	            vertexArray[i+2] = v[i+2];
 	    }
 
-	    printf("la vamos nos\n");
+	
 	    nVertexComponents = i ;
 
 	    
@@ -119,7 +128,7 @@ void parseGroup(XMLElement* grupo, Group& gr){
     	  escX, escY, escZ;
 
    	vector<Group> vGroups;
-
+   	float time;
 
    	angle1 = rotX = rotY = transX = transY = transZ = escX = escY = escZ = 1;
 
@@ -132,37 +141,68 @@ void parseGroup(XMLElement* grupo, Group& gr){
 		//cout << transform -> Value() << endl;
    		
    		if(strcmp(transform -> Value(), "translate") == 0){
-	   		if(transform -> Attribute("X")) 
-	   			transX = stof(transform->Attribute("X"));
-				else transX = 0;
 
-			if (transform->Attribute("Y")) 
-				transY = stof(transform->Attribute("Y"));
-				else transY = 0;
-			
-			if (transform->Attribute("Z")) 
-				transZ = stof(transform->Attribute("Z"));
-				else transZ = 0;
+   			if(transform -> Attribute("time")){
+   				time = stof(transform->Attribute("time"));
+   				vector<Ponto> trPoints;
+   				int j;
+   				
+   				for(XMLElement* point = transform->FirstChildElement("point"); point; point = point->NextSiblingElement("point")){
+   					if(point->Attribute("X"))
+   						transX = stof(point->Attribute("X"));
 
-			tr = Translacao(transX, transY, transZ);
-			gr.setTranslacao(tr);
-   		}
+   					if(point->Attribute("Y"))
+   						transY = stof(point->Attribute("Y"));
+
+					if (transform->Attribute("Z")) 
+						transZ = stof(transform->Attribute("Z"));
+
+					Ponto p = Ponto(transX, transY, transZ);
+					trPoints.push_back(p);
+				}
+
+				tr = Translacao(time, trPoints, trPoints.size());
+				tr.prepCurves();
+   			}
+
+	   		else{
+		   		if(transform -> Attribute("X")) 
+		   			transX = stof(transform->Attribute("X"));
+					else transX = 0;
+
+				if (transform->Attribute("Y")) 
+					transY = stof(transform->Attribute("Y"));
+					else transY = 0;
+				
+				if (transform->Attribute("Z")) 
+					transZ = stof(transform->Attribute("Z"));
+					else transZ = 0;
+
+				tr = Translacao(transX, transY, transZ);
+				gr.setTranslacao(tr);
+	   		}
+   	}
 
    		if (strcmp(transform -> Value(), "rotate") == 0){
 				if (transform -> Attribute("angle")) 
 					angle1 = stof(transform -> Attribute("angle"));
 					else angle1 = 0;
+
+				if(transform -> Attribute("time"))
+					time = stof(transform -> Attribute("time"));
+					else time = 0;
+
 				
-				if (transform -> Attribute("X")) 
-					rotX = stof(transform -> Attribute("X"));
+				if (transform -> Attribute("axisX")) 
+					rotX = stof(transform -> Attribute("axisX"));
 					else rotX = 0;
 				
-				if (transform -> Attribute("Y")) 
-					rotY = stof(transform -> Attribute("Y"));
+				if (transform -> Attribute("axisY")) 
+					rotY = stof(transform -> Attribute("axisY"));
 					else rotY = 0;
 				
-				if (transform -> Attribute("Z")) 
-					rotZ = stof(transform -> Attribute("Z"));
+				if (transform -> Attribute("axiZZ")) 
+					rotZ = stof(transform -> Attribute("axisZ"));
 					else rotZ = 0;
 
 				rot = Rotacao(angle1, rotX, rotY, rotZ);
