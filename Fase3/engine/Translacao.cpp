@@ -12,11 +12,13 @@ Translacao::Translacao(float a, float b, float c){
 	z = c;
 }
 
-Translacao::Translacao(float t, vector<Ponto> vtp, int num) {
+Translacao::Translacao(float t, vector<Ponto> vtp, int num, float d) {
 	time = t;
 	transPoints = vtp;
 	tam = num;
+	gt = d;
 }
+
 
 void Translacao::print(){
     cout << "Translacao(" << x << ", "
@@ -28,6 +30,7 @@ void Translacao::print(){
 
 void getCatmullRomPoint(float t, int* indices, vector<Ponto> transP, float* res, float* deriv){
 	float temp[4];
+	float temp2[4];
 
 	float m[4][4] = { 	{ -0.5f, 1.5f, -1.5f, 0.5f },
 						{ 1.0f, -2.5f, 2.0f, -0.5f },
@@ -41,10 +44,10 @@ void getCatmullRomPoint(float t, int* indices, vector<Ponto> transP, float* res,
 	
 
 	//T*M
-	temp[0] = vt[0]*m[0][1] + vt[1]*m[1][1] + vt[3]*m[2][1] + m[3][1];
-	temp[1] = vt[0]*m[0][2] + vt[1]*m[1][2] + vt[3]*m[2][2] + m[3][2];
-	temp[2] = vt[0]*m[0][3] + vt[1]*m[1][3] + vt[3]*m[2][3] + m[3][3];
-
+	temp[0] = vt[0]*m[0][0] + vt[1]*m[1][0] + vt[2]*m[2][0] + m[3][0];
+	temp[1] = vt[0]*m[0][1] + vt[1]*m[1][1] + vt[2]*m[2][1] + m[3][1];
+	temp[2] = vt[0]*m[0][2] + vt[1]*m[1][2] + vt[2]*m[2][2] + m[3][2];
+	temp[3] = vt[0]*m[0][3] + vt[1]*m[1][3] + vt[2]*m[2][3] + m[3][3];
 
 	int i0 = indices[0]; Ponto p0 = transP[i0];
 	int i1 = indices[1]; Ponto p1 = transP[i1];
@@ -57,13 +60,14 @@ void getCatmullRomPoint(float t, int* indices, vector<Ponto> transP, float* res,
 	res[2] = temp[0] * p0.getZ() + temp[1] * p1.getZ() + temp[2] * p2.getZ() + temp[3] * p3.getZ();
 
 	// T'*M
-	temp[0] = vdt[0]*m[0][1] + vdt[1]*m[1][1] + vdt[3]*m[2][1] + m[3][1];
-	temp[1] = vdt[0]*m[0][2] + vdt[1]*m[1][2] + vdt[3]*m[2][2] + m[3][2];
-	temp[2] = vdt[0]*m[0][3] + vdt[1]*m[1][3] + vdt[3]*m[2][3] + m[3][3];
+	temp2[0] = vdt[0]*m[0][1] + vdt[1]*m[1][1] + vdt[3]*m[2][1] + m[3][1];
+	temp2[1] = vdt[0]*m[0][2] + vdt[1]*m[1][2] + vdt[3]*m[2][2] + m[3][2];
+	temp2[2] = vdt[0]*m[0][3] + vdt[1]*m[1][3] + vdt[3]*m[2][3] + m[3][3];
+	temp2[3]  = vdt[0]*m[0][3] + vdt[1]*m[1][3] + vdt[3]*m[2][3] + m[3][3];
 
-	res[0] = temp[0] * p0.getX() + temp[1] * p1.getX() + temp[2] * p2.getX() + temp[3] * p3.getX();
-	res[1] = temp[0] * p0.getY() + temp[1] * p1.getY() + temp[2] * p2.getY() + temp[3] * p3.getY();
-	res[2] = temp[0] * p0.getZ() + temp[1] * p1.getZ() + temp[2] * p2.getZ() + temp[3] * p3.getZ();
+	deriv[0] = temp2[0] * p0.getX() + temp2[1] * p1.getX() + temp2[2] * p2.getX() + temp2[3] * p3.getX();
+	deriv[1] = temp2[0] * p0.getY() + temp2[1] * p1.getY() + temp2[2] * p2.getY() + temp2[3] * p3.getY();
+	deriv[2] = temp2[0] * p0.getZ() + temp2[1] * p1.getZ() + temp2[2] * p2.getZ() + temp2[3] * p3.getZ();
 	
 }
 
@@ -83,6 +87,8 @@ void Translacao::getGlobalCatmullRomPoint(float gt, vector<Ponto> transP, float*
 	getCatmullRomPoint(t, indices, transP, res, deriv);
 }
 
+
+
 void Translacao::prepCurves() {
 	float finalCoord[3];
 	float deriv[3];
@@ -95,5 +101,6 @@ void Translacao::prepCurves() {
 		pontosCurva.push_back(p);
 	}
 }
+
 
 

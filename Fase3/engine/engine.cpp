@@ -13,7 +13,7 @@ float refX = 0;
 float refY = 0;
 float refZ = 0;
 float angleX = 0.0f, angleY = 0.0f, angleZ = 0.0f;
-float camX = 0, camY = 30, camZ = 40;
+float camX = 0, camY = 20, camZ = 20;
 
 // MOUSE //
 int startX, startY, tracking = 0;
@@ -54,24 +54,67 @@ void changeSize(int w, int h){
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void renderCatmullRomCurve(float* res, float* der, Translacao tr) {
+	//int n = pontos.size();
+	//float pp[3];
+	float gt = 0.0f;
+	glBegin(GL_LINE_LOOP);
+	
+	while(gt < 1.0f){
+		vector<Ponto> ts = tr.getTransPoints();
+		cout << tr.getGt() << endl;
+		tr.getGlobalCatmullRomPoint(gt, tr.getTransPoints(), res, der);
+		glVertex3f(res[0], res[1], res[2]);
+		//printf("%d %d %d\n", res[0], res[1], res[2]);
+		gt += 0.0001f;
+	}
+	glEnd();
+	/*
+	for (int i = 0; i < n; i++) {
+		pp[0] = pontos[i].getX(); pp[1] = pontos[i].getY(); pp[2] = pontos[i].getZ();
+		glVertex3fv(pp);
+	}
+	glEnd();
+	*/
+}
 
 
 // Desenhar um grupo de modelos
 
 void draw_group(Group g){
+
+	float gt;
+
     glPushMatrix();
     glRotatef(g.getRotacao().getAngulo(), g.getRotacao().getX(), g.getRotacao().getY(), g.getRotacao().getZ());
     glScalef(g.getEscala().getX(), g.getEscala().getY(), g.getEscala().getZ());
     if(g.getTranslacao().getTime() != 0){
-    	vector<Ponto> vp = g.getTranslacao().getPontosCurva();
+    	float der[3];
+		float res[3];
+    	
+  		Translacao tr = g.getTranslacao();
+		vector<Ponto> vp = tr.getTransPoints();
+		renderCatmullRomCurve(res, der, tr);
+		tr.getGlobalCatmullRomPoint(tr.getGt(), vp, res, der);
+		glTranslatef(res[0], res[1], res[2]);
+		gt = fmod(glutGet(GLUT_ELAPSED_TIME) / (tr.getTime()*1000.0f), 1);
+    	tr.updateGt(gt);
+    	cout << tr.getGt() << endl;
+
+    	//float te = glutGet(GLUT_ELAPSED_TIME) % (int)(g.getTranslacao().getTime() * 1000);
+		//float gt = te / (g.getTranslacao().getTime() * 1000);
+		
+		//vp.clear();
+		
+    	
     	//glTranslatef(vp[0].getX(), vp[0].getY(), vp[0].getZ());
     }
     else{
     	glTranslatef(g.getTranslacao().getX(), g.getTranslacao().getY(), g.getTranslacao().getZ());
+    	
     
 	}
-	
-	cout << "merda" << endl;  
+  
 
     //glBegin(GL_TRIANGLES);
 
@@ -161,8 +204,10 @@ void parseGroup(XMLElement* grupo, Group& gr){
 					trPoints.push_back(p);
 				}
 
-				tr = Translacao(time, trPoints, trPoints.size());
-				tr.prepCurves();
+				tr = Translacao(time, trPoints, trPoints.size(), 0);
+				
+				//tr.prepCurves();
+				gr.setTranslacao(tr);
    			}
 
 	   		else{

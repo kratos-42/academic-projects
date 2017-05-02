@@ -14,6 +14,7 @@
 #include "tinyxml2.h"
 #include "group.h"
 #include "Ponto.h"
+#include "Translacao.h"
 
 using namespace tinyxml2;
 using namespace std;

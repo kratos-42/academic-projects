@@ -13,6 +13,7 @@ class Translacao{
 	float z;
 	float time;
 	int tam;
+	float gt;
 
 	vector<Ponto> transPoints;
 	vector<Ponto> pontosCurva;
@@ -20,12 +21,14 @@ class Translacao{
 
 public:
 	Translacao();
-	Translacao(float, vector<Ponto>, int);
+	Translacao(float, vector<Ponto>, int, float);
 	Translacao(float, float, float);
 	~Translacao() {};
 	float getX() { return x; }
 	float getY() { return y; }
 	float getZ() { return z; }
+	float getGt() { return gt;}
+	void updateGt(float t) { gt = t;}
 	void prepCurves();
 	vector<Ponto> getTransPoints(){ return transPoints; }
 	vector<Ponto> getPontosCurva(){ return pontosCurva; }
