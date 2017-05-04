@@ -1,12 +1,10 @@
 import javax.xml.crypto.Data;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 import java.util.HashMap;
 
 import static java.lang.Thread.sleep;
+import static sun.misc.Version.println;
 
 /**
  * Created by kratos on 16-03-2017.
@@ -23,13 +21,14 @@ public class ServerUdp {
 
         while (true) {
             InetAddress address = InetAddress.getByName("localhost");
+            sleep(5000);
             probing(socket, address, 5555);
-            sleep(2000);
         }
     }
 
 
-    public static void probing(DatagramSocket socket, InetAddress udpClientAddress, int port) throws IOException{
+    public static void probing(DatagramSocket socket, InetAddress udpClientAddress, int port)
+            throws IOException, SocketTimeoutException{
 
         byte[] toReceive = new byte[1024];
         byte[] toSend;
@@ -38,11 +37,13 @@ public class ServerUdp {
         DatagramPacket request = new DatagramPacket(toSend, toSend.length, udpClientAddress, port);
         socket.send(request);
         String requestToString = new String(request.getData(), 0, request.getLength());
-
-        socket.setSoTimeout(1000);
         System.out.println(requestToString);
+
+        socket.setSoTimeout(2000);
         DatagramPacket response = new DatagramPacket(toReceive, toReceive.length, udpClientAddress, port);
-        socket.send(response);
+        socket.receive(response);
+        String responseToString = new String(response.getData(), 0, response.getLength());
+        System.out.println(responseToString);
 
     }
 }
