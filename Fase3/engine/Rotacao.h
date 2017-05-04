@@ -9,6 +9,7 @@ class Rotacao{
 	float x;
 	float y;
 	float z;
+	float time;
 
 public:
 	Rotacao();
@@ -18,9 +19,11 @@ public:
 	float getX() { return x; }
 	float getY() { return y; }
 	float getZ() { return z; }
+	float getTime() { return time; }
 	void setAngulo(float a){ angulo = a; }
 	void setX(float a){ x = a; }
 	void setY(float b){ y = b; }
 	void setZ(float c){ z = c; }
+	void setTime(float t) { time = t;}
     void print();
 };

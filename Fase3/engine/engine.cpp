@@ -8,12 +8,12 @@ Group ggroup;
 
 
 
-string xmlfile = "models.xml";
+
 float refX = 0;
 float refY = 0;
 float refZ = 0;
 float angleX = 0.0f, angleY = 0.0f, angleZ = 0.0f;
-float camX = 0, camY = 20, camZ = 20;
+float camX = 0, camY = 20, camZ = 70;
 
 // MOUSE //
 int startX, startY, tracking = 0;
@@ -31,8 +31,6 @@ GLuint arrayBuffers[3];
 float *vertexArray;
 int nVertexComponents;
 
-
-//char* xmlfile = "models.xml";
 
 
 
@@ -55,27 +53,18 @@ void changeSize(int w, int h){
 }
 
 void renderCatmullRomCurve(float* res, float* der, Translacao tr) {
-	//int n = pontos.size();
-	//float pp[3];
+
 	float gt = 0.0f;
 	glBegin(GL_LINE_LOOP);
 	
 	while(gt < 1.0f){
 		vector<Ponto> ts = tr.getTransPoints();
-		cout << tr.getGt() << endl;
 		tr.getGlobalCatmullRomPoint(gt, tr.getTransPoints(), res, der);
 		glVertex3f(res[0], res[1], res[2]);
-		//printf("%d %d %d\n", res[0], res[1], res[2]);
+
 		gt += 0.0001f;
 	}
 	glEnd();
-	/*
-	for (int i = 0; i < n; i++) {
-		pp[0] = pontos[i].getX(); pp[1] = pontos[i].getY(); pp[2] = pontos[i].getZ();
-		glVertex3fv(pp);
-	}
-	glEnd();
-	*/
 }
 
 
@@ -86,37 +75,43 @@ void draw_group(Group g){
 	float gt;
 
     glPushMatrix();
-    glRotatef(g.getRotacao().getAngulo(), g.getRotacao().getX(), g.getRotacao().getY(), g.getRotacao().getZ());
+    // Escala
     glScalef(g.getEscala().getX(), g.getEscala().getY(), g.getEscala().getZ());
+
+    //Rotacao com tempo
+    if(g.getRotacao().getTime() != 0){ 
+    	Rotacao r = g.getRotacao();
+    	float ang = fmod((glutGet(GLUT_ELAPSED_TIME)*360.0f ) / (r.getTime()*1000.0f), 360.0f);
+    	glRotatef(ang, r.getX(), r.getY(), r.getZ());
+    	r.setAngulo(ang);
+    }
+    //Rotacao normal
+    else
+		glRotatef(g.getRotacao().getAngulo(), g.getRotacao().getX(), g.getRotacao().getY(), g.getRotacao().getZ());
+    
+    //Translacao numa curva
     if(g.getTranslacao().getTime() != 0){
     	float der[3];
 		float res[3];
     	
   		Translacao tr = g.getTranslacao();
-		vector<Ponto> vp = tr.getTransPoints();
 		renderCatmullRomCurve(res, der, tr);
-		tr.getGlobalCatmullRomPoint(tr.getGt(), vp, res, der);
-		glTranslatef(res[0], res[1], res[2]);
+  		cout << "tempo:" << tr.getTime() << endl;
+
 		gt = fmod(glutGet(GLUT_ELAPSED_TIME) / (tr.getTime()*1000.0f), 1);
     	tr.updateGt(gt);
-    	cout << tr.getGt() << endl;
-
-    	//float te = glutGet(GLUT_ELAPSED_TIME) % (int)(g.getTranslacao().getTime() * 1000);
-		//float gt = te / (g.getTranslacao().getTime() * 1000);
-		
-		//vp.clear();
-		
-    	
-    	//glTranslatef(vp[0].getX(), vp[0].getY(), vp[0].getZ());
+		vector<Ponto> vp = tr.getTransPoints();
+		tr.getGlobalCatmullRomPoint(tr.getGt(), vp, res, der);
+		glTranslatef(res[0], res[1], res[2]);
+		cout << "res0" << res[0] << "res1" << res[1] << "res2:" << res[2] << endl;
     }
+    //Rotacao normal
     else{
     	glTranslatef(g.getTranslacao().getX(), g.getTranslacao().getY(), g.getTranslacao().getZ());
-    	
-    
 	}
   
 
-    //glBegin(GL_TRIANGLES);
+    //Desenhar modelos existentes c/ VBOs
 
     for(Model it: g.getModels()){
     	auto v = it.getPontos();
@@ -128,7 +123,6 @@ void draw_group(Group g){
 
     	int i;
 		for(i = 0; i < v.size(); i +=3){
-	        	//printf("%s\n", "cria vertices");
 	            vertexArray[i] = v[i];
 	            vertexArray[i+1] = v[i+1];
 	            vertexArray[i+2] = v[i+2];
@@ -181,7 +175,7 @@ void parseGroup(XMLElement* grupo, Group& gr){
    		
    	for(transform = grupo -> FirstChildElement(); transform; transform = transform -> NextSiblingElement()){
 
-		//cout << transform -> Value() << endl;
+		
    		
    		if(strcmp(transform -> Value(), "translate") == 0){
 
@@ -193,20 +187,19 @@ void parseGroup(XMLElement* grupo, Group& gr){
    				for(XMLElement* point = transform->FirstChildElement("point"); point; point = point->NextSiblingElement("point")){
    					if(point->Attribute("X"))
    						transX = stof(point->Attribute("X"));
-
+   						else transX = 0;
    					if(point->Attribute("Y"))
-   						transY = stof(point->Attribute("Y"));
-
-					if (transform->Attribute("Z")) 
-						transZ = stof(transform->Attribute("Z"));
+   						transY = stof(point->Attribute("Y"));	
+   						else transY = 0;
+					if (point->Attribute("Z")) 
+						transZ = stof(point->Attribute("Z"));
+						else transZ = 0;
 
 					Ponto p = Ponto(transX, transY, transZ);
 					trPoints.push_back(p);
 				}
 
-				tr = Translacao(time, trPoints, trPoints.size(), 0);
-				
-				//tr.prepCurves();
+				tr = Translacao(time, trPoints, trPoints.size(), 0);	
 				gr.setTranslacao(tr);
    			}
 
@@ -225,33 +218,55 @@ void parseGroup(XMLElement* grupo, Group& gr){
 
 				tr = Translacao(transX, transY, transZ);
 				gr.setTranslacao(tr);
+				
 	   		}
    	}
 
    		if (strcmp(transform -> Value(), "rotate") == 0){
-				if (transform -> Attribute("angle")) 
-					angle1 = stof(transform -> Attribute("angle"));
-					else angle1 = 0;
-
-				if(transform -> Attribute("time"))
+				
+				if(transform -> Attribute("time")){
 					time = stof(transform -> Attribute("time"));
-					else time = 0;
 
-				
-				if (transform -> Attribute("axisX")) 
-					rotX = stof(transform -> Attribute("axisX"));
-					else rotX = 0;
-				
-				if (transform -> Attribute("axisY")) 
-					rotY = stof(transform -> Attribute("axisY"));
-					else rotY = 0;
-				
-				if (transform -> Attribute("axiZZ")) 
-					rotZ = stof(transform -> Attribute("axisZ"));
-					else rotZ = 0;
+					if (transform -> Attribute("axisX")){
+						rotX = stof(transform -> Attribute("axisX"));
+					}
+						else rotX = 0;
+					
+					if (transform -> Attribute("axisY")) 
+						rotY = stof(transform -> Attribute("axisY"));
+						else rotY = 0;
+					
+					if (transform -> Attribute("axisZ")) 
+						rotZ = stof(transform -> Attribute("axisZ"));
+						else rotZ = 0;
 
-				rot = Rotacao(angle1, rotX, rotY, rotZ);
-				gr.setRotacao(rot);
+
+					rot = Rotacao(0, rotX, rotY, rotZ);
+					rot.setTime(time);
+					gr.setRotacao(rot);
+				}
+
+
+				else{
+					if (transform -> Attribute("angle")) 
+						angle1 = stof(transform -> Attribute("angle"));
+						else angle1 = 0;
+					
+					if (transform -> Attribute("axisX")) 
+						rotX = stof(transform -> Attribute("axisX"));
+						else rotX = 0;
+					
+					if (transform -> Attribute("axisY")) 
+						rotY = stof(transform -> Attribute("axisY"));
+						else rotY = 0;
+					
+					if (transform -> Attribute("axisZ")) 
+						rotZ = stof(transform -> Attribute("axisZ"));
+						else rotZ = 0;
+
+					rot = Rotacao(angle1, rotX, rotY, rotZ);
+					gr.setRotacao(rot);
+				}
 		}
 
 
@@ -282,13 +297,6 @@ void parseGroup(XMLElement* grupo, Group& gr){
 				gr.addModel(transform2 -> Attribute("file"));	
 				transform2 = transform2 -> NextSiblingElement();	
 			}
-
-			/*for(transform2 = transform -> FirstChildElement(); transform2; transform2 = transform2 -> NextSiblingElement()){	
-   				//gr.addModel(transform2 -> Attribute("file"));
-   				cout << transform -> Attribute("file") << endl;
-   			
-			}*/
-
 		}
 		
 
@@ -442,7 +450,7 @@ void processMouseButtons(int button, int state, int xx, int yy) {
 		}
 		tracking = 0;
 	}
-	glutPostRedisplay();
+	//glutPostRedisplay();
 }
 
 void processMouseMotion(int xx, int yy) {
@@ -489,14 +497,15 @@ int main(int argc, char **argv){
 	float x, y, z;
 	x = y = z = 0;
 
-	if(argc =! 2){
-		return 0;
+	if(argc != 2){
+		cout << "Usage:" << endl;
+		cout << "./engine " << "file.xml" << endl;
+		return 0; 
 	}
 
 	string xmlfile = argv[1];
 	readXMLFile(xmlfile);
-	//ggroup.print();
-	
+
 	/* readXMLFile(argv[1]); */
 	//init GLUT and the Window
 	glutInit(&argc, argv);
@@ -508,6 +517,7 @@ int main(int argc, char **argv){
 	//register the functions that will process the events(callbacks)
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize); 
+	glutIdleFunc(renderScene);
 
 	//  ****  KEYBOARD **** 
 	glutKeyboardFunc(normalKeys);	

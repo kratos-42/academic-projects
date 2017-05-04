@@ -1,9 +1,12 @@
 #pragma once
 
+
+
 #include <iostream>
 #include "Ponto.h"
 #include <vector>
 #include <math.h>
+
 
 using namespace std;
 
@@ -35,6 +38,8 @@ public:
 	float getTime(){ return time; }
 	void setTime(float t) { time = t; }
 	void getGlobalCatmullRomPoint(float gt, vector<Ponto> transP, float* res, float* deriv);
+	void getCatmullRomPoint(float, int*, vector<Ponto>, float*, float*);
+	float* execTrans();
 	void setTransPoints(vector<Ponto> p){ transPoints = p; }
 	void setPontosCurva(vector<Ponto> p){ pontosCurva = p; }
 	void setTransx(float a) { x = a; }

@@ -18,10 +18,7 @@ void Group::print(){
     trans.print();
     rot.print();
     esc.print();
-    /*for(int i = 0; i < modelos.size(); i++){
-    	cout << modelosNames[i] << ": " << modelos[i].size() << endl;
-*/
-    	
+
     
     for(auto g: groups)
         g.print();
