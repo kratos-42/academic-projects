@@ -1,17 +1,17 @@
-import com.sun.security.ntlm.Client;
+//import com.sun.security.ntlm.Client;
 
-import javax.sound.sampled.Line;
-import javax.xml.crypto.Data;
+//import javax.sound.sampled.Line;
+//import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
+//import java.util.Scanner;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
 public class ClientUdp extends Thread {
 
-    InfoTable table = new InfoTable()
+    InfoTable table = new InfoTable(3.2,0.3,1);
 
     public void run() {
 
