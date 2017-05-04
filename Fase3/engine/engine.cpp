@@ -96,14 +96,14 @@ void draw_group(Group g){
     	
   		Translacao tr = g.getTranslacao();
 		renderCatmullRomCurve(res, der, tr);
-  		cout << "tempo:" << tr.getTime() << endl;
+  		
 
 		gt = fmod(glutGet(GLUT_ELAPSED_TIME) / (tr.getTime()*1000.0f), 1);
     	tr.updateGt(gt);
 		vector<Ponto> vp = tr.getTransPoints();
 		tr.getGlobalCatmullRomPoint(tr.getGt(), vp, res, der);
 		glTranslatef(res[0], res[1], res[2]);
-		cout << "res0" << res[0] << "res1" << res[1] << "res2:" << res[2] << endl;
+		
     }
     //Rotacao normal
     else{

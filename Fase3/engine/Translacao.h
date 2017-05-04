@@ -19,7 +19,6 @@ class Translacao{
 	float gt;
 
 	vector<Ponto> transPoints;
-	vector<Ponto> pontosCurva;
 	vector<Ponto> pontosDeriv;
 
 public:
@@ -34,14 +33,14 @@ public:
 	void updateGt(float t) { gt = t;}
 	void prepCurves();
 	vector<Ponto> getTransPoints(){ return transPoints; }
-	vector<Ponto> getPontosCurva(){ return pontosCurva; }
+	//vector<Ponto> getPontosCurva(){ return pontosCurva; }
 	float getTime(){ return time; }
 	void setTime(float t) { time = t; }
 	void getGlobalCatmullRomPoint(float gt, vector<Ponto> transP, float* res, float* deriv);
 	void getCatmullRomPoint(float, int*, vector<Ponto>, float*, float*);
 	float* execTrans();
 	void setTransPoints(vector<Ponto> p){ transPoints = p; }
-	void setPontosCurva(vector<Ponto> p){ pontosCurva = p; }
+	//void setPontosCurva(vector<Ponto> p){ pontosCurva = p; }
 	void setTransx(float a) { x = a; }
 	void setTransy(float b) { y = b; }
 	void setTransz(float c) { z = c; }
