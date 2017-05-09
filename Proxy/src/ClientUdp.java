@@ -18,10 +18,12 @@ public class ClientUdp extends Thread {
         try {
             InetAddress address = InetAddress.getByName("localhost");
             DatagramSocket socket = new DatagramSocket(5555);
-            byte[] toSend = new byte[1024];
+            byte[] toSend;
             byte[] toReceive = new byte[1024];
             DatagramPacket out;
             String resposta;
+            //ClientSending sending = new ClientSending();
+            //sending.run();
 
 
             while (true) {

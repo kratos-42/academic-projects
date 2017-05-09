@@ -11,43 +11,21 @@ import static sun.misc.Version.println;
  */
 public class ServerUdp {
 
-    HashMap<InetAddress, InfoTable> serversConnected;
-
-    public static void main(String args[]) throws SocketException, IOException, InterruptedException {
-
-        DatagramSocket socket = new DatagramSocket(4242);
-        byte[] toReceive = new byte[1024];
-        byte[] toSend = new byte[1024];
-
-        while (true) {
-            InetAddress address = InetAddress.getByName("localhost");
-            sleep(5000);
-            probing(socket, address, 5555);
-        }
-    }
+    public static HashMap<InetAddress, InfoTable> serversConnected = new HashMap<>();
 
 
-    public static void probing(DatagramSocket socket, InetAddress udpClientAddress, int port)
-            throws IOException, SocketTimeoutException{
 
-        byte[] toReceive = new byte[1024];
-        byte[] toSend;
-        toSend = "PROBING".getBytes();
+    public static void main(String args[]) throws IOException, InterruptedException {
 
-        DatagramPacket request = new DatagramPacket(toSend, toSend.length, udpClientAddress, port);
-        socket.send(request);
-        String requestToString = new String(request.getData(), 0, request.getLength());
-        System.out.println(requestToString);
+        InfoTable table = new InfoTable(1,2,3);
+        serversConnected.put(InetAddress.getByName("127.0.0.1"), table);
 
-        socket.setSoTimeout(2000);
-        DatagramPacket response = new DatagramPacket(toReceive, toReceive.length, udpClientAddress, port);
-        socket.receive(response);
-        String responseToString = new String(response.getData(), 0, response.getLength());
-        System.out.println(responseToString);
+        System.out.println(table.getNrConexoes());
 
+        ServerSend sending = new ServerSend(serversConnected);
+        sending.start();
     }
 }
-
 
 /*
 
