@@ -1,0 +1,3 @@
+/home/kratos/Curso/cg/projeto/Fase4/engine/cmake/CMakeFiles/edit_cache.dir
+/home/kratos/Curso/cg/projeto/Fase4/engine/cmake/CMakeFiles/rebuild_cache.dir
+/home/kratos/Curso/cg/projeto/Fase4/engine/cmake/CMakeFiles/engine.dir
