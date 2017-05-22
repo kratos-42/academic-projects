@@ -1,5 +1,5 @@
 <scene>
-	<group> 
+	<group>
 		<translate time="5">
 			<point X="1" Y="5" Z="6"/>
 			<point X="3" Y="8" Z="10"/>
@@ -7,8 +7,7 @@
 			<point X="-3" Y="10" Z="10"/>
 		</translate>
 		<models>
-			<model file="sphere2.3d" diffR="1" diffG="5"/>
-			<model file="box2.3d" diffB="5"/>
+			<model file="sphere.3d"/>
 		</models>
 	</group>
 </scene>

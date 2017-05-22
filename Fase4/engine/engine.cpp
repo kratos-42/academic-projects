@@ -132,9 +132,9 @@ void draw_group(Group g){
 				tw = ilGetInteger(IL_IMAGE_WIDTH);
 				th = ilGetInteger(IL_IMAGE_HEIGHT);
 				ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-				it.setTexData(ilGetData());
+				texData = ilGetData();
 
-				glBindTexture(GL_TEXTURE_2D, it.getTexID());
+				glBindTexture(GL_TEXTURE_2D, it.getTextureBuffer());
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
@@ -147,12 +147,19 @@ void draw_group(Group g){
 
 		    nVertexComponents = v.size();
 		    
-		    glBindBuffer(GL_ARRAY_BUFFER, it.getPontosBuffer());
-		    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nVertexComponents, &v[0], GL_STATIC_DRAW);  
-		    glVertexPointer(3, GL_FLOAT, 0, 0);
-		    glDrawArrays(GL_TRIANGLES, 0, nVertexComponents);
 
-		    glBindTexture(GL_TEXTURE_2D, 0);
+		    glBindBuffer(GL_ARRAY_BUFFER, it.getPontosBuffer());
+		    glVertexPointer(3, GL_FLOAT, 0, 0);
+		    //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nVertexComponents, &v[0], GL_STATIC_DRAW);  
+/*		    glBindBuffer(GL_ARRAY_BUFFER, it.getNormalBuffer());
+			glNormalPointer(GL_FLOAT, 0, 0);
+			
+			glBindBuffer(GL_ARRAY_BUFFER, it.getTextureBuffer());
+			glTexCoordPointer(2, GL_FLOAT, 0, 0);
+*/		    
+		    glDrawArrays(GL_TRIANGLES, 0, nVertexComponents);
+			
+			glBindTexture(GL_TEXTURE_2D, 0);
 
     }
 
@@ -315,22 +322,25 @@ void parseGroup(XMLElement* grupo, Group& gr){
 				auto v = m.getPontos();
 				auto n = m.getNormalV();
 				auto t = m.getTextures();
+				cout << v[0] << v[1] << v[2] << endl;
+				cout << n[0] << n[1] << n[2] << endl;
+				cout << t[0] << t[1] << t[2] << endl;
+				cout << v.size() << endl;
 
-				glGenBuffers(3, buffer); 
+				glGenBuffers(1, buffer); 
 
 				glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-        		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nVertexComponents, &(v[0]), GL_STATIC_DRAW); 
-
+        		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * v.size(), &(v[0]), GL_STATIC_DRAW); 
+/*
         		glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * n.size(), &(n[0]), GL_STATIC_DRAW);
 				
 				glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * t.size(), &(t[0]), GL_STATIC_DRAW);
-
+*/
 				m.setArrayBuffers(buffer);
 
-
-				if(transform2 -> Attribute("texture")){
+				if(strcmp(transform2 -> Value(), "texture")){
 					m.setTexture((char*)(transform2 -> Attribute("texture")));
 					//cout << transform2 -> Attribute("texture") << endl;
 				}
@@ -349,7 +359,7 @@ void parseGroup(XMLElement* grupo, Group& gr){
 						//cout << transform2 -> Attribute("diffR") << endl;
 				}
 				gr.addModel(m);
-				transform2 = transform2 -> NextSiblingElement();	
+				transform2 = transform2 -> NextSiblingElement("model");	
 			}
 		}
 
@@ -387,9 +397,10 @@ void parseGroup(XMLElement* grupo, Group& gr){
 
 		if(strcmp(transform -> Value(), "group") == 0){
 			Group g;
-			parseGroup(transform, g);
 			gr.addGroup(g);
+			parseGroup(transform, g);
 		}
+
 	}
 }
 
@@ -587,7 +598,7 @@ void processMouseMotion(int xx, int yy) {
 	camZ = rAux * cos(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
 	camY = rAux * sin(betaAux * 3.14 / 180.0);
 
-	glutPostRedisplay();
+	//glutPostRedisplay();
 }
 
 
@@ -661,6 +672,8 @@ int main(int argc, char **argv){
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	ilInit();
 	ilEnable(IL_ORIGIN_SET);

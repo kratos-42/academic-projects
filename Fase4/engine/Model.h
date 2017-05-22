@@ -28,9 +28,8 @@ class Model{
 	vector<float> normalV;
 	vector<float> textures;
 	GLuint* arrayBuffers;
-	char* texture;
+	const char* texture;
 	unsigned int texID;
-	unsigned char* texData;
 	float diffR;
 	float diffG;
 	float diffB;
@@ -44,6 +43,8 @@ public:
 	void setDiffG(float d) { diffG = d;}
 	void setDiffB(float d) { diffB = d;}
 	GLuint getPontosBuffer() {return arrayBuffers[0];}
+	GLuint getNormalBuffer() {return arrayBuffers[1];}
+	GLuint getTextureBuffer() {return arrayBuffers[2];}
 	void setArrayBuffers(GLuint* g){arrayBuffers=g;}
 	string getModelsName(){ return modelsName;}
 	GLuint* getArrayBuffers(){return arrayBuffers;}
@@ -53,9 +54,9 @@ public:
 	vector<float> getPontos(){ return pontos; }
 	vector<float> getNormalV(){ return normalV; }
 	vector<float> getTextures(){ return textures; }
-	char* getTexture(){ return texture;}
+	const char* getTexture(){ return texture;}
 	unsigned int getTexID(){ return texID;}
-	void setTexData(unsigned char* c){ texData = c;}
+	
 
 	int size();
 	~Model() {};
