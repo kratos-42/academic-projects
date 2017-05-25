@@ -13,7 +13,7 @@ float refX = 0;
 float refY = 0;
 float refZ = 0;
 float angleX = 0.0f, angleY = 0.0f, angleZ = 0.0f;
-float camX = 0, camY = 20, camZ = 70;
+float camX = 0, camY = 20, camZ = 100;
 int imageWidth;
 unsigned char *imageData;
 unsigned int texture;
@@ -35,8 +35,8 @@ int timebase = 0, frame = 0;
 
 
 float nVertexComponents;
-
-
+//vector<Ponto> trPoints;
+int contador = 0;
 
 
 void changeSize(int w, int h){
@@ -64,6 +64,7 @@ void renderCatmullRomCurve(float* res, float* der, Translacao tr) {
 	
 	while(gt < 1.0f){
 		vector<Ponto> ts = tr.getTransPoints();
+		
 		tr.getGlobalCatmullRomPoint(gt, tr.getTransPoints(), res, der);
 		glVertex3f(res[0], res[1], res[2]);
 		
@@ -86,6 +87,7 @@ void draw_group(Group g){
     glScalef(g.getEscala().getX(), g.getEscala().getY(), g.getEscala().getZ());
 
     //Rotacao com tempo
+    if(0)
     if(g.getRotacao().getTime() != 0){ 
     	Rotacao r = g.getRotacao();
     	float ang = fmod((glutGet(GLUT_ELAPSED_TIME)*360.0f ) / (r.getTime()*1000.0f), 360.0f);
@@ -97,11 +99,13 @@ void draw_group(Group g){
 		glRotatef(g.getRotacao().getAngulo(), g.getRotacao().getX(), g.getRotacao().getY(), g.getRotacao().getZ());
     
     //Translacao numa curva
+    
     if(g.getTranslacao().getTime() != 0){
     	float der[3];
 		float res[3];
   		Translacao tr = g.getTranslacao();
-		renderCatmullRomCurve(res, der, tr);
+  		//vector<Ponto> v = tr.getTransPoints();
+  		renderCatmullRomCurve(res, der, tr);
   		
 
 		gt = fmod(glutGet(GLUT_ELAPSED_TIME) / (tr.getTime()*1000.0f), 1);
@@ -122,8 +126,8 @@ void draw_group(Group g){
 
 	   	for(Model it: g.getModels()){
 	    	auto v = it.getPontos();
-	    
-		    if(it.getTexture() != NULL){
+	    	string s(it.getTexture());
+		    if(0) {
 		    	unsigned int t, tw, th;
 		    	unsigned char* texData;
 				ilGenImages(1, &t);
@@ -146,25 +150,34 @@ void draw_group(Group g){
 		    }
 
 		    nVertexComponents = v.size();
+		    GLuint buffers = it.getPontosBuffer();
 		    
 
-		    glBindBuffer(GL_ARRAY_BUFFER, it.getPontosBuffer());
+		    glBindBuffer(GL_ARRAY_BUFFER, buffers);
+
+		    glEnableClientState(GL_VERTEX_ARRAY);
+			//glEnableClientState(GL_NORMAL_ARRAY);
+			//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
 		    glVertexPointer(3, GL_FLOAT, 0, 0);
 		    //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nVertexComponents, &v[0], GL_STATIC_DRAW);  
-/*		    glBindBuffer(GL_ARRAY_BUFFER, it.getNormalBuffer());
-			glNormalPointer(GL_FLOAT, 0, 0);
+		    //glBindBuffer(GL_ARRAY_BUFFER, it.getNormalBuffer());
+			//glNormalPointer(GL_FLOAT, 0, 0);
 			
-			glBindBuffer(GL_ARRAY_BUFFER, it.getTextureBuffer());
-			glTexCoordPointer(2, GL_FLOAT, 0, 0);
-*/		    
+			//glBindBuffer(GL_ARRAY_BUFFER, it.getTextureBuffer());
+			//glTexCoordPointer(2, GL_FLOAT, 0, 0);
+	    
 		    glDrawArrays(GL_TRIANGLES, 0, nVertexComponents);
 			
-			glBindTexture(GL_TEXTURE_2D, 0);
+			//glBindTexture(GL_TEXTURE_2D, 0);
+		    //glDisableClientState(GL_VERTEX_ARRAY);
+			//glDisableClientState(GL_NORMAL_ARRAY);
+			//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     }
-
+    
+	
     for(auto it: g.getGroups()){
-    	cout << it.getGroups().size() << endl;
         draw_group(it);
 		
     }
@@ -203,9 +216,9 @@ void parseGroup(XMLElement* grupo, Group& gr){
 
    			if(transform -> Attribute("time")){
    				time = stof(transform->Attribute("time"));
-   				vector<Ponto> trPoints;
-   				int j;
-   				
+				vector<Ponto> trPoints;
+				
+   				int j=0;
    				for(XMLElement* point = transform->FirstChildElement("point"); point; point = point->NextSiblingElement("point")){
    					if(point->Attribute("X"))
    						transX = stof(point->Attribute("X"));
@@ -221,8 +234,12 @@ void parseGroup(XMLElement* grupo, Group& gr){
 					trPoints.push_back(p);
 				}
 
-				tr = Translacao(time, trPoints, trPoints.size(), 0);	
+
+				tr = Translacao(time, trPoints, trPoints.size(), 0);
+				
 				gr.setTranslacao(tr);
+
+
    			}
 
 	   		else{
@@ -240,6 +257,7 @@ void parseGroup(XMLElement* grupo, Group& gr){
 
 				tr = Translacao(transX, transY, transZ);
 				gr.setTranslacao(tr);
+				tr = {};
 				
 	   		}
    	}
@@ -317,28 +335,27 @@ void parseGroup(XMLElement* grupo, Group& gr){
 
 			while(transform2 && strcmp(transform2 -> Value(), "model") == 0){
 				Model m = Model(transform2 -> Attribute("file"));	
-				GLuint buffer[3];
+				GLuint buffer;
 				m.loadModel();
 				auto v = m.getPontos();
 				auto n = m.getNormalV();
 				auto t = m.getTextures();
-				cout << v[0] << v[1] << v[2] << endl;
-				cout << n[0] << n[1] << n[2] << endl;
-				cout << t[0] << t[1] << t[2] << endl;
-				cout << v.size() << endl;
+				
+				glGenBuffers(1, &buffer); 
 
-				glGenBuffers(1, buffer); 
-
-				glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+				glBindBuffer(GL_ARRAY_BUFFER, buffer);
         		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * v.size(), &(v[0]), GL_STATIC_DRAW); 
+
+        		//cout << "prepare: " << buffer << endl;
 /*
         		glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * n.size(), &(n[0]), GL_STATIC_DRAW);
 				
 				glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * t.size(), &(t[0]), GL_STATIC_DRAW);
-*/
-				m.setArrayBuffers(buffer);
+*/				int b = buffer;
+        		//cout << "id buffer " << b << endl;
+				m.setArrayBuffers(b);
 
 				if(strcmp(transform2 -> Value(), "texture")){
 					m.setTexture((char*)(transform2 -> Attribute("texture")));
@@ -394,29 +411,17 @@ void parseGroup(XMLElement* grupo, Group& gr){
 				}
 		}
 
-
+		
 		if(strcmp(transform -> Value(), "group") == 0){
 			Group g;
-			gr.addGroup(g);
 			parseGroup(transform, g);
+			gr.addGroup(g);
 		}
 
 	}
 }
 
-void prepareModels(Model m){
 
-        m.loadModel();
-        vector<float> pontos = m.getPontos();
-        
-        int nVertexComponents = pontos.size();
-		GLuint* gl = m.getArrayBuffers();        
-
-        glGenBuffers(1, gl);  
-
-        glBindBuffer(GL_ARRAY_BUFFER, gl[0]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nVertexComponents, &(pontos[0]), GL_STATIC_DRAW);  
-}
 
 void readXMLFile(string file){
 
@@ -455,7 +460,7 @@ void showFrames() {
 void renderScene(void){
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 
 	glLoadIdentity();
 	gluLookAt(camX, camY, camZ,
@@ -669,11 +674,8 @@ int main(int argc, char **argv){
 	
 
 	//opemGL settings
-	glEnable(GL_DEPTH_TEST);
+	
 	glEnable(GL_CULL_FACE);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	ilInit();
 	ilEnable(IL_ORIGIN_SET);
@@ -684,7 +686,7 @@ int main(int argc, char **argv){
 	glEnable(GL_LIGHT0);
 	glEnable(GL_TEXTURE_2D);
 	//init();
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//enter Glut's main cycle
 	glutMainLoop();		

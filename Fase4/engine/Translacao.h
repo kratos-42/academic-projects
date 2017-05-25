@@ -40,6 +40,7 @@ public:
 	void getCatmullRomPoint(float, int*, vector<Ponto>, float*, float*);
 	float* execTrans();
 	void setTransPoints(vector<Ponto> p){ transPoints = p; }
+	//void printTranspoints(){cout << "settign transpoint:" << transPoints.size() << endl; }
 	//void setPontosCurva(vector<Ponto> p){ pontosCurva = p; }
 	void setTransx(float a) { x = a; }
 	void setTransy(float b) { y = b; }

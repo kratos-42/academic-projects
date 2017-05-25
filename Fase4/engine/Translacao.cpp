@@ -20,6 +20,7 @@ Translacao::Translacao(float t, vector<Ponto> vtp, int num, float d) {
 }
 
 
+
 void Translacao::print(){
     cout << "Translacao(" << x << ", "
                           << y << ", "
@@ -78,12 +79,14 @@ void Translacao::getCatmullRomPoint(float t, int* indices, vector<Ponto> transP,
 void Translacao::getGlobalCatmullRomPoint(float gt, vector<Ponto> transP, float* res, float* deriv) {
 	
 	int tamanho = transP.size();
+	
 	float t = gt * tamanho; // this is the real global t
 	int index = floor(t);  // which segment
 	t = t - index; // where within  the segment
 
 	// indices store the points
 	int indices[4];
+
 	indices[0] = (index + tamanho - 1) % tamanho;
 	indices[1] = (indices[0] + 1) % tamanho;
 	indices[2] = (indices[1] + 1) % tamanho;

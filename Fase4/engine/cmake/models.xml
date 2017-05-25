@@ -6,8 +6,10 @@
 			<point X="2" Y="5" Z="2"/>
 			<point X="-3" Y="10" Z="10"/>
 		</translate>
+		<rotate time="10" axisX="2"/>
 		<models>
-			<model file="sphere.3d"/>
+			<model file="sphere.3d" />
+			<model file="torus.3d"/>
 		</models>
 	</group>
 </scene>
