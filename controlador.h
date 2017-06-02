@@ -11,6 +11,8 @@ struct node{
 	int id;
 	char** cmd;
 	int nrConnections;
+	int pd[2];
+	int running;
 	int connected_nodes[100];
 	UT_hash_handle hh;
 };

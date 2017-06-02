@@ -43,6 +43,7 @@ void run(struct node* node){
 	struct node* dest_node;
 	int idDestNode;
 
+	int pipe = open(dest_node -> fifo);
 	for(int i = 0; i < node -> nrConnections; i++){
 		idDestNode = node -> connected_nodes[i];
 		printf("%d\n", idDestNode);
@@ -52,6 +53,8 @@ void run(struct node* node){
 		if(node -> running == 0){
 			close(node -> pd[1]);
 			if(fork() == 0){
+				dup2(fd, 0);
+				close(fd);
 				node -> running = 1;
 				execvp(node -> cmd[0], node -> cmd+1);
 			}
@@ -68,19 +71,10 @@ void inject(int idnode, char* args[]){
 
 	int i = 0, idCurrDestNode;
 	struct node* node;
-	//struct node* dest;
+	struct node* dest;
 
 	HASH_FIND_INT(rede, &idnode, node);
 	
-/*
-	while(i < node -> nrConnections){
-
-		idCurrDestNode = node -> connected_nodes[i];
-		HASH_FIND_INT(rede, &idCurrDestNode, dest);
-		
-	}*/
-	
-
 	run(node);
 
 
@@ -122,9 +116,6 @@ void connectNodes(int idnode, char* nodes[]){
 		printf("Node %d não existe.\n", idnode);
 		return;
 	}
-	
-	dup2(nodes -> pd[1], 1);
-	printf("pd[0]: %d pd[1]: %d\n", node->pd[0], node->pd[1]);
 
 	struct node* node_to_connect;
 
@@ -140,25 +131,32 @@ void connectNodes(int idnode, char* nodes[]){
 
 			}
 			else{ // CASO NÃO EXISTA
-				dup2(node_to_connect -> pd[0], node -> pd[1]);
+				char* path;
 
+				snprintf(path, 1024, "./fifoList/%dto%d", idnode, idDestNode);
+				int pipe = mkfifo(path);
+
+				node -> fd = pipe;
 				node -> connected_nodes[pointer++] = atoi(nodes[i]);			
 				node -> nrConnections++;
 				
+				node_to_connect -> fd = pipe;
 				printf("fd output de %d para %d\n", node -> pd[1], node_to_connect -> pd[0]);
-				dup2(node -> pd[1], node_to_connect -> pd[0]); //DUPLICAÇÃO DA SAIDA DO NODE PARA A ENTRADA DO NODE DESTINO
-
+				
 			}
 	}
 }
 
 void createNode(int idnode, char* args[]){
+
+	int pd[2];
+	//pipe(pd);
 	struct node* s = malloc(sizeof(struct node));
 	s -> id = idnode;
 	s -> cmd = args;
 	s -> nrConnections = 0;
 	s -> running = 0;
-	pipe(s -> pd);
+	s -> pd = pd;
 
 
 	HASH_ADD_INT(rede, id, s);
