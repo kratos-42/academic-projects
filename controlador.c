@@ -9,6 +9,7 @@ void run(struct node* node){
 
 		if(node -> running == 0){
 			if(fork() == 0){
+				dup2(node -> pd[1], 1);
 				close(node -> pd[1]);
 				node -> running = 1;
 				execv(node -> cmd[0], node -> cmd+1);
@@ -26,7 +27,6 @@ void run(struct node* node){
 		}
 			
 		if(node -> running == 0){
-			printf("A correr node %d com pd[0] = %d\n", node -> id, node -> pd[0]);
 			if(fork() == 0){
 				node -> running = 1;
 				execv(node -> cmd[0], node -> cmd+1);
@@ -48,9 +48,9 @@ void inject(int idnode, char* args[]){
 
 	if(fork() == 0){
 		close(pd[0]);
-		dup2(pd[0], 1);
+		dup2(node -> pd[0], 1);
 		run(node);
-		execvp(args[0], args+1);
+		execv(args[0], args+1);
 		perror(args[0]);
 		exit(1);
 	}
