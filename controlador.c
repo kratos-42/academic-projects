@@ -43,23 +43,35 @@ void run(struct node* node){
 	struct node* dest_node;
 	int idDestNode;
 
-	for(int i = 0; i < node -> nrConnections; i++){
-		idDestNode = node -> connected_nodes[i];
-		printf("%d\n", idDestNode);
-		HASH_FIND_INT(rede, &idDestNode, dest_node);
-		run(dest_node);
-
+	if(node -> nrConnections == 0){
 		if(node -> running == 0){
-			close(node -> pd[1]);
+			if(fork() == 0){
+				close(node -> pd[1]);
+				printf("A correr node %d com pd[0]= %d\n", node -> id, node -> pd[0]);
+				node -> running = 1;
+				execv(node -> cmd[0], node -> cmd+1);
+				perror(node -> cmd[0]);
+				_exit(1);
+			}
+		}
+	}
+
+	else{
+		for(int i = 0; i < node -> nrConnections; i++){
+			idDestNode = node -> connected_nodes[i];
+			HASH_FIND_INT(rede, &idDestNode, dest_node);
+			run(dest_node);
+		}
+			
+		if(node -> running == 0){
+			printf("A correr node %d com pd[0] = %d\n", node -> id, node -> pd[0]);
 			if(fork() == 0){
 				node -> running = 1;
-				execvp(node -> cmd[0], node -> cmd+1);
+				execv(node -> cmd[0], node -> cmd+1);
+				perror(node -> cmd[0]);
+				_exit(1);
 			}
-
-			close(node -> pd[0]);
 		}
-		else
-			return;
 	}
 }
 
@@ -72,19 +84,20 @@ void inject(int idnode, char* args[]){
 
 	HASH_FIND_INT(rede, &idnode, node);
 	
-/*
-	while(i < node -> nrConnections){
+	int pd[2];
+	pipe(pd);
 
-		idCurrDestNode = node -> connected_nodes[i];
-		HASH_FIND_INT(rede, &idCurrDestNode, dest);
-		
-	}*/
-	
-
-	run(node);
-
+	if(fork() == 0){
+		close(pd[0]);
+		dup2(pd[0], 1);
+		run(node);
+		execvp(args[0], args+1);
+		perror(args[0]);
+		exit(1);
+	}
 
 }
+
 
 
 void disconnect(int idnode, int idnode2){
@@ -123,9 +136,6 @@ void connectNodes(int idnode, char* nodes[]){
 		return;
 	}
 	
-	dup2(nodes -> pd[1], 1);
-	printf("pd[0]: %d pd[1]: %d\n", node->pd[0], node->pd[1]);
-
 	struct node* node_to_connect;
 
 	int pointer = node -> nrConnections;
@@ -140,8 +150,6 @@ void connectNodes(int idnode, char* nodes[]){
 
 			}
 			else{ // CASO NÃO EXISTA
-				dup2(node_to_connect -> pd[0], node -> pd[1]);
-
 				node -> connected_nodes[pointer++] = atoi(nodes[i]);			
 				node -> nrConnections++;
 				
@@ -182,6 +190,7 @@ int main(int argc, char* argv[]){
 		//strcpy(buffer, line);
 		args = split(line);
 
+
 		if(strcmp(args[0], "node") == 0){
 
 			idnode = atoi(args[1]);
@@ -205,11 +214,13 @@ int main(int argc, char* argv[]){
 			disconnect(idnode, atoi(args[2]));
 		}
 
-		else if(strcmp(args[0], "inject")){
+		else if(strcmp(args[0], "inject") == 0){
 			idnode = atoi(args[1]);
+			args[argc] = NULL;
 
 			inject(idnode, args+2);
 		}
+
 	}
 
 	return 0;
