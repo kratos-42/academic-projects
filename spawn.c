@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
 	//PROCURAR O VALOR SEGUIDO DE $ 
 	// Percorrer todos os indices de argv, seguidamente de cada um dos caracteres aí contidos. 
 	// No caso de encontrar $, guarda em index o valor que o procede até ao delimeter " ".
-	while(i <= argc){
+	while(i < argc){
 		int j = 0;
 		strcpy(string, argv[i]);
 		while(string[j] != '\0'){
