@@ -13,6 +13,8 @@ struct node {
 	int id;
 	char** cmd;
 	int nrConnections;
+	int pd[2];
+	int running;
 	int connected_nodes[MAX_NODES];
 	UT_hash_handle hh;
 };
