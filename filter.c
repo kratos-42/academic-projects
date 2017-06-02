@@ -1,27 +1,5 @@
 #include "filter.h"
 
-
-int getCollumn(char* str, int index, char* collumn, int n) {
-
-	int i = 1;
-	char* s;
-	for (s = strtok(str, ":\n"); s && i < index; s = strtok(NULL, ":\n"), i++);
-
-	if (s) {
-		strncpy(collumn, s, n);
-		return strlen(s);
-	}
-
-	return 0;
-
-}
-
-
-
-
-// -------------------
-
-
 void filterEq(int col, int col2){
 
 	int n;
@@ -152,34 +130,29 @@ void filterDiff(int col, int col2){
 
 int main(int argc, char* argv[]){
 
-
 	int col = atoi(argv[1]);
 	int col2 = atoi(argv[3]);
 
-	char operador[128];
-	strcpy(operador, argv[2]);
-
-
-	if(strcmp(operador, "=") == 0){
+	if(strcmp(argv[2], "=") == 0){
 		filterEq(col, col2);
 	}
 
-	else if(strcmp(operador, ">=") == 0){
+	else if(strcmp(argv[2], ">=") == 0){
 		filterEqGreater(col, col2);
 	}
 
-	else if(strcmp(operador, "<=") == 0){
+	else if(strcmp(argv[2], "<=") == 0){
 		filterEqLess(col, col2);
 	}
 
-	else if(strcmp(operador, ">") == 0){
+	else if(strcmp(argv[2], ">") == 0){
 		filterGreater(col, col2);
 	}
 
-	else if(strcmp(operador, "<") == 0)
+	else if(strcmp(argv[2], "<") == 0)
 		filterLess(col, col2);
 
-	else if(strcmp(operador, "!=") == 0)
+	else if(strcmp(argv[2], "!=") == 0)
 		filterDiff(col, col2);
 
 	return 0;

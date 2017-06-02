@@ -1,5 +1,19 @@
 #include "utils.h"
 
+int getCollumn(char* str, int index, char* collumn, int n) {
+
+	int i = 1;
+	char* s;
+	for (s = strtok(str, ":\n"); s && i < index; s = strtok(NULL, ":\n"), i++);
+
+	if (s) {
+		strncpy(collumn, s, n);
+		return strlen(s);
+	}
+
+	return 0;
+}
+
 ssize_t readln(int fd, void* buf, size_t bsize){
 	int n = 0, r;
 	char* p = (char*) buf;
