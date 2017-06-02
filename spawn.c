@@ -24,7 +24,6 @@ int main(int argc, char* argv[]){
 
 	int i = 0;
 	int index, argvIndex;
-	char cpy[MAX_SIZE];
 	char string[MAX_SIZE];
 
 	//PROCURAR O VALOR SEGUIDO DE $ 

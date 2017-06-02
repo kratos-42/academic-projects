@@ -1,17 +1,19 @@
 #include <string.h>
 #include <unistd.h>
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "uthash.h"
 #include "utils.h"
+#include "uthash.h"
 
 #define MAX_SIZE 1024
+#define MAX_NODES 100
 
-struct node{
+struct node {
 	int id;
 	char** cmd;
 	int nrConnections;
-	int connected_nodes[100];
+	int connected_nodes[MAX_NODES];
 	UT_hash_handle hh;
 };
 
