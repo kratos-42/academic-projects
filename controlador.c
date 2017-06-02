@@ -1,53 +1,15 @@
 #include "controlador.h"
 
-ssize_t readln(int fd, void* buf, size_t bsize){
-	int n = 0, r;
-	char* p = (char*) buf;
-
-	while(n < bsize && (r = read(fd, p+n, 1) == 1) && p[n++] != '\n'){
-		;
-	}
-
-	return r == -1 ? -1 : n;
-}
-
-
-
-char** split(char* string){
-
-    char** strings = NULL;
-    char* p = strtok(string, " ");
-    int n_spaces = 0;
-
-    while (p) {
-        n_spaces++;
-        strings = realloc(strings, sizeof(char*) * n_spaces);
-    
-        if (strings == NULL)
-            exit (-1); /* memory allocation failed */
-    
-        strings[n_spaces - 1] = strdup(p);
-    
-        p = strtok(NULL, " ");
-    }
-
-    strings = realloc(strings, sizeof(char*) * (n_spaces + 1));
-    strings[n_spaces] = 0;
-
-    return strings;
-}
-
-
 void run(struct node* node){
 
 	struct node* dest_node;
 	int idDestNode;
 
 	if(node -> nrConnections == 0){
+
 		if(node -> running == 0){
 			if(fork() == 0){
 				close(node -> pd[1]);
-				printf("A correr node %d com pd[0]= %d\n", node -> id, node -> pd[0]);
 				node -> running = 1;
 				execv(node -> cmd[0], node -> cmd+1);
 				perror(node -> cmd[0]);
@@ -75,12 +37,9 @@ void run(struct node* node){
 	}
 }
 
-
 void inject(int idnode, char* args[]){
 
-	int i = 0, idCurrDestNode;
 	struct node* node;
-	//struct node* dest;
 
 	HASH_FIND_INT(rede, &idnode, node);
 	
@@ -95,13 +54,11 @@ void inject(int idnode, char* args[]){
 		perror(args[0]);
 		exit(1);
 	}
-
 }
 
 
 
 void disconnect(int idnode, int idnode2){
-
 	struct node* node;
 	int i = 0, j = 0;
 	HASH_FIND_INT(rede, &idnode, node);
@@ -126,7 +83,6 @@ void disconnect(int idnode, int idnode2){
 	}
 }
 
-
 void connectNodes(int idnode, char* nodes[]){
 
 	struct node* node;
@@ -136,6 +92,7 @@ void connectNodes(int idnode, char* nodes[]){
 		return;
 	}
 	
+
 	struct node* node_to_connect;
 
 	int pointer = node -> nrConnections;
@@ -170,42 +127,30 @@ void createNode(int idnode, char* args[]){
 
 
 	HASH_ADD_INT(rede, id, s);
-	printf("Node %d adicionado\n", s->id);
+
 }
-
-
-
 
 int main(int argc, char* argv[]){
 
-	int n, idnode;
+    int n, idnode;
 
-	// line para ler do stdin || buffer para fazer uma copia da line e fazer os strtok  
-	// command para verificar o comando do controlador || comp para verificar cada um dos componentes do comando do controlador
-	char line[MAX_SIZE];
-	char** args;
+    char line[MAX_SIZE];
+    char** args;
 
-	while((n = readln(1, line, MAX_SIZE)) > 0){
+    while((n = readln(1, line, MAX_SIZE)) > 0){
+        args = split(line, " ");
 
-		//strcpy(buffer, line);
-		args = split(line);
+        if(strcmp(args[0], "node") == 0){
+            idnode = atoi(args[1]);
+            createNode(idnode, args + 2);
+        }
 
 
-		if(strcmp(args[0], "node") == 0){
+        else if(strcmp(args[0], "connect") == 0){
+            idnode = atoi(args[1]);
+            connectNodes(idnode, args + 2);
+        }
 
-			idnode = atoi(args[1]);
-			
-			createNode(idnode, args+2);
-			
-			
-		}
-
-		else if(strcmp(args[0], "connect") == 0){
-
-			idnode = atoi(args[1]);
-
-			connectNodes(idnode, args+2);
-		}
 
 		else if(strcmp(args[0], "disconnect") == 0){
 
@@ -223,5 +168,5 @@ int main(int argc, char* argv[]){
 
 	}
 
-	return 0;
+    return 0;
 }
