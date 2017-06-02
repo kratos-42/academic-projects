@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include  <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h> 
+#include "utils.h"
 
 
 #define MAX_SIZE 1024

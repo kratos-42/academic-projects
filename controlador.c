@@ -1,40 +1,5 @@
 #include "controlador.h"
 
-ssize_t readln(int fd, void* buf, size_t bsize){
-    int n = 0, r;
-    char* p = (char*) buf;
-
-    while(n < bsize && (r = read(fd, p+n, 1) == 1) && p[n++] != '\n'){
-        ;
-    }
-
-    return r == -1 ? -1 : n;
-}
-
-char** split(char* string){
-
-    char** strings = NULL;
-    char* p = strtok(string, " ");
-    int n_spaces = 0;
-
-    while (p) {
-        n_spaces++;
-        strings = realloc(strings, sizeof(char*) * n_spaces);
-
-        if (strings == NULL)
-            exit (-1); /* memory allocation failed */
-
-        strings[n_spaces - 1] = strdup(p);
-
-        p = strtok(NULL, " ");
-    }
-
-    strings = realloc(strings, sizeof(char*) * (n_spaces + 1));
-    strings[n_spaces] = 0;
-
-    return strings;
-}
-
 void run(struct node* node){
 
 	struct node* dest_node;
@@ -42,7 +7,6 @@ void run(struct node* node){
 
 	for(int i = 0; i < node -> nrConnections; i++){
 		idDestNode = node -> connected_nodes[i];
-		printf("%d\n", idDestNode);
 		HASH_FIND_INT(rede, &idDestNode, dest_node);
 		run(dest_node);
 
@@ -62,23 +26,11 @@ void run(struct node* node){
 
 void inject(int idnode, char* args[]){
 
-	/* int i = 0, idCurrDestNode; */
 	struct node* node;
-	//struct node* dest;
 
 	HASH_FIND_INT(rede, &idnode, node);
-	
-/*
-	while(i < node -> nrConnections){
-
-		idCurrDestNode = node -> connected_nodes[i];
-		HASH_FIND_INT(rede, &idCurrDestNode, dest);
-		
-	}*/
-	
 
 	run(node);
-
 
 }
 
@@ -166,16 +118,16 @@ int main(int argc, char* argv[]){
     char** args;
 
     while((n = readln(1, line, MAX_SIZE)) > 0){
-        args = split(line);
+        args = split(line, " ");
 
         if(strcmp(args[0], "node") == 0){
             idnode = atoi(args[1]);
-            createNode(idnode, args+2);
+            createNode(idnode, args + 2);
         }
 
         else if(strcmp(args[0], "connect") == 0){
             idnode = atoi(args[1]);
-            connectNodes(idnode, args+2);
+            connectNodes(idnode, args + 2);
         }
 
         else if(strcmp(args[0], "disconnect") == 0){
@@ -186,8 +138,7 @@ int main(int argc, char* argv[]){
         
         else if(strcmp(args[0], "inject")){
 			idnode = atoi(args[1]);
-
-			inject(idnode, args+2);
+			inject(idnode, args + 2);
 		}
 	}
 

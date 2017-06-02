@@ -11,12 +11,10 @@ ssize_t readln(int fd, void* buf, size_t bsize){
 	return r == -1 ? -1 : n;
 }
 
-
-
-char** split(char* string){
+char** split(char* string, char* seps){
 
     char** strings = NULL;
-    char* p = strtok(string, " ");
+    char* p = strtok(string, seps);
     int n_spaces = 0;
 
     while (p) {
@@ -28,7 +26,7 @@ char** split(char* string){
     
         strings[n_spaces - 1] = strdup(p);
     
-        p = strtok(NULL, " ");
+        p = strtok(NULL, seps);
     }
 
     strings = realloc(strings, sizeof(char*) * (n_spaces + 1));
