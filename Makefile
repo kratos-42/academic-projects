@@ -8,8 +8,8 @@ all: controlador.o const filter spawn window utils.o
 
 const: const.o
 	$(CC) $(CC_FLAGS) const.o -o const
-filter: filter.o
-	$(CC) $(CC_FLAGS) filter.o -o filter
+filter: filter.o utils.o
+	$(CC) $(CC_FLAGS) utils.o filter.o -o filter
 spawn: spawn.o utils.o
 	$(CC) $(CC_FLAGS) utils.o spawn.o -o spawn
 window: window.o
