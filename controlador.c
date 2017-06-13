@@ -9,16 +9,20 @@ void run(struct node* node){
 
 		if(node -> running == 0){
 			if(fork() == 0){
+				int log = open("log.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 				close(node -> pd[1]);
+				dup2(log, 1);
 				node -> running = 1;
 				printf("output de %d\n", node -> id);
-				execv(node -> cmd[0], node -> cmd+1);
+				execv(node -> cmd[0], node -> cmd);
 				perror(node -> cmd[0]);
 				_exit(1);
 			}
-
-			close(node -> pd[0]);
-			close(node -> pd[1]);
+			/*
+			else{
+				close(node -> pd[0]);
+				close(node -> pd[1]);
+			}*/
 		}
 
 	}
@@ -32,20 +36,28 @@ void run(struct node* node){
 			
 		if(node -> running == 0){
 			if(fork() == 0){
+				int log = open("log.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 				node -> running = 1;
-				dup2(node -> pd[1], 1);
+				dup2(node -> pd[0], 0);
+				close(node -> pd[0]);
 				close(node -> pd[1]);
-				execv(node -> cmd[0], node -> cmd+1);
+				dup2(log, 1);
+				//dup2(node -> pd[1], 1);
+				//close(node -> pd[1]);
+				execv(node -> cmd[0], node -> cmd);
 				perror(node -> cmd[0]);
 				_exit(1);
 			}
-			close(node -> pd[0]);
-			close(node -> pd[1]);
+			/*
+			else{
+				close(node -> pd[0]);
+				close(node -> pd[1]);
+			}*/
 		}
 
 	}
 }
-
+/*
 void inject(int idnode, char* args[]){
 
 	struct node* node;
@@ -64,15 +76,40 @@ void inject(int idnode, char* args[]){
 		close(pd[1]);
 		////close(pd[1]);
 		////close(node -> pd[0]);
-		execvp(args[0], args+1);
+		execvp(args[0], args);
 		perror(args[0]);
 		exit(1);
 	}
 	close(pd[0]);
 	close(pd[1]);
+}*/
+
+void inject(int idnode, char* args[]){
+
+	struct node* node;
+
+	HASH_FIND_INT(rede, &idnode, node);
+	
+	
+	run(node);
+	int pd[2];
+	pipe(pd);
+
+	if(fork()==0){
+		
+		close(pd[0]);
+		dup2(pd[1], 1);
+		dup2(node -> pd[0], pd[1]);
+		close(pd[1]);
+
+		execvp(args[0], args);
+		perror(args[0]);
+		exit(1);
+	}
+
+	close(pd[0]);
+	close(pd[1]);
 }
-
-
 
 void disconnect(int idnode, int idnode2){
 	struct node* node;

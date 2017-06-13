@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include "utils.h"
 #include "uthash.h"
 

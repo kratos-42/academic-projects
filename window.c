@@ -15,7 +15,7 @@ int getCollumn(char* str, int index, char* collumn, int n) {
 
 }
 
-
+/*
 void average(int col, int nrlinhas){
 
 	int n, i, j, accumulate, currLine;
@@ -51,14 +51,14 @@ void average(int col, int nrlinhas){
 		write(1, buffer, strlen(buffer));
 	}
 }
-
+*/
 
 
 float average(float* values, int n){
 
 	float avg=0;
-
-	for(int i = 0; i < n; i++){
+	int i;
+	for(i = 0; i < n; i++){
 		avg += values[i];
 	}
 
@@ -110,11 +110,12 @@ int main(int argc, char* argv[]){
 	strcpy(operador, argv[2]);
 
 
-	if(strcmp(operador, "avg") == 0){
+	/*if(strcmp(operador, "avg") == 0){
 		average(col, lin);
 	}
 
 	if(strcmp(operador, "max") == 0){
-	}
+	}*/
+	return 0;
 
 }
