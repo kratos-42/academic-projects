@@ -9,14 +9,18 @@ void run(struct node* node){
 
 		if(node -> running == 0){
 			if(fork() == 0){
-				dup2(node -> pd[1], 1);
 				close(node -> pd[1]);
 				node -> running = 1;
+				printf("output de %d\n", node -> id);
 				execv(node -> cmd[0], node -> cmd+1);
 				perror(node -> cmd[0]);
 				_exit(1);
 			}
+
+			close(node -> pd[0]);
+			close(node -> pd[1]);
 		}
+
 	}
 
 	else{
@@ -29,11 +33,16 @@ void run(struct node* node){
 		if(node -> running == 0){
 			if(fork() == 0){
 				node -> running = 1;
+				dup2(node -> pd[1], 1);
+				close(node -> pd[1]);
 				execv(node -> cmd[0], node -> cmd+1);
 				perror(node -> cmd[0]);
 				_exit(1);
 			}
+			close(node -> pd[0]);
+			close(node -> pd[1]);
 		}
+
 	}
 }
 
@@ -45,15 +54,22 @@ void inject(int idnode, char* args[]){
 	
 	int pd[2];
 	pipe(pd);
+	run(node);
 
 	if(fork() == 0){
+		printf("pd[0] do primeiro node: %d\n", node -> pd[0]);
+		dup2(pd[1], 1);
+		dup2(node -> pd[0], pd[1]);
 		close(pd[0]);
-		dup2(node -> pd[0], 1);
-		run(node);
-		execv(args[0], args+1);
+		close(pd[1]);
+		////close(pd[1]);
+		////close(node -> pd[0]);
+		execvp(args[0], args+1);
 		perror(args[0]);
 		exit(1);
 	}
+	close(pd[0]);
+	close(pd[1]);
 }
 
 
@@ -97,7 +113,7 @@ void connectNodes(int idnode, char* nodes[]){
 
 	int pointer = node -> nrConnections;
 	int idDestNode;
-	int i = 0;
+	int i;
 
 		for(i = 0; nodes[i] != NULL; i++){
 			idDestNode = atoi(nodes[i]); 
@@ -106,13 +122,12 @@ void connectNodes(int idnode, char* nodes[]){
 				printf("Node %d não existe.\n", atoi(nodes[i]));
 
 			}
-			else{ // CASO NÃO EXISTA
+			else{ // CASO NÃO EXISTA NA LISTA DE CONEXÕES
 				node -> connected_nodes[pointer++] = atoi(nodes[i]);			
 				node -> nrConnections++;
 				
-				printf("fd output de %d para %d\n", node -> pd[1], node_to_connect -> pd[0]);
-				dup2(node -> pd[1], node_to_connect -> pd[0]); //DUPLICAÇÃO DA SAIDA DO NODE PARA A ENTRADA DO NODE DESTINO
-
+				dup2(node_to_connect -> pd[0], node -> pd[1]); //DUPLICAÇÃO DA SAIDA DO NODE PARA A ENTRADA DO NODE DESTINO
+				printf("input de %d com fd = %d, mudado para o output de %d com saida %d\n", idDestNode, node_to_connect -> pd[0], idnode, node -> pd[1]);
 			}
 	}
 }
@@ -124,6 +139,7 @@ void createNode(int idnode, char* args[]){
 	s -> nrConnections = 0;
 	s -> running = 0;
 	pipe(s -> pd);
+
 
 
 	HASH_ADD_INT(rede, id, s);

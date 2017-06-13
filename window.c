@@ -54,7 +54,49 @@ void average(int col, int nrlinhas){
 
 
 
+float average(float* values, int n){
 
+	float avg=0;
+
+	for(int i = 0; i < n; i++){
+		avg += values[i];
+	}
+
+	return avg/i;
+}
+
+float max(float* values, int n){
+
+	float max = 0;
+	for(int i = 0; i < n; i++){
+		if(max < values[i])
+			max = values[i];
+	}
+
+	return max;
+}
+
+float min(float* values, int n){
+
+	float min = 0;
+	for(int i = 0; i < n; i++){
+		if(min > values[i])
+			min = values[i];
+	}
+
+	return min;
+}
+
+float sum(float* values, int n){
+
+	float sum;
+
+	for(int i = 0; i < n; i++){
+		sum += values[i];
+	}
+
+	return sum;
+}
 
 
 
@@ -71,4 +113,8 @@ int main(int argc, char* argv[]){
 	if(strcmp(operador, "avg") == 0){
 		average(col, lin);
 	}
+
+	if(strcmp(operador, "max") == 0){
+	}
+
 }
