@@ -8,7 +8,7 @@ Abstract
 
 This project was divided in 2 phases:
   - In a first aproach, implement some components to be used on processing data;
-  - Then create the network where each node processes a single task.
+  - Then, create the controller of the network where each node processes a single task.
 
 The creation of this project came with a pratical exercise proposed in a class subject (more precisely, operating systems).
 The intention here was to develop our knowledge on a fragile theme that is the direct interaction with the kernel of our system, by using some system calls, so we can understand how the processes communicate by each other and how the (powerful) things we use everyday when programming. Hence, the using language is our beloved C.
@@ -43,3 +43,9 @@ This component reproduces every line, executing the indicated command (one time 
 **Example**: spawn ls -a $1 (command: ls, where arguments are an option and an other option or directory, depending what is on the collumn 1)  
 ![inout](https://github.com/ReiKratos/Operating-Systems/blob/master/StreamProcessing/spawn.png)  
 
+
+[Controller](https://github.com/ReiKratos/Operating-Systems/blob/master/StreamProcessing/controlador.c)
+==========
+
+#Possible Commands
+##node <id>  <cmd> <args...>
