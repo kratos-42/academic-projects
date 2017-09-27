@@ -11,7 +11,7 @@ This project was divided in 2 phases:
  
  
  Component modules:
-    - [Const](./StreamProcessing/const.c) 
-    - Filter
-    - Spawn
+    - [Const](./StreamProcessing/const.c) \n
+    - [Filter](./StreamProcessing/filter.c) \n
+    - [Spawn](./StreamProcessing/spawn.c) \n
     
