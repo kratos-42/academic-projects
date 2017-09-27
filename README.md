@@ -28,4 +28,9 @@ Reproduces every line, adding a new collumn with a constant value at the end.
 **Example**: const 10     
 ![inout](https://github.com/ReiKratos/Operating-Systems/blob/master/StreamProcessing/imagem.png)
 
+Filter
+------
 
+Reprouces every line that satisfies the indicated predicate.
+**Example**: filter 2 < 4
+![inout]()
