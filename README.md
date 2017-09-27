@@ -25,8 +25,7 @@ Const
 -----
 
 Reproduces every line, adding a new collumn with a constant value at the end.  
-**Example**:  
-const 10   
-![alt tag](http://url/to/img.png)
+**Example**: const 10     
+![alt text](/home/kratos/Desktop/imagem.png)
 
 
