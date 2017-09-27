@@ -2,6 +2,8 @@
 
 Stream processing creating multiple processes linked by pipes.
 
+Abstract
+========
 
 
 This project was divided in 2 phases:
