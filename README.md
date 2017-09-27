@@ -26,6 +26,6 @@ Const
 
 Reproduces every line, adding a new collumn with a constant value at the end.  
 **Example**: const 10     
-![alt text](/home/kratos/Desktop/imagem.png)
+![inout](https://github.com/ReiKratos/Operating-Systems/blob/master/StreamProcessing/imagem.png)
 
 
