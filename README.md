@@ -48,4 +48,15 @@ This component reproduces every line, executing the indicated command (one time 
 ==========
 
 ### Possible Commands  
-#### node <id< <cmd< <args...<
+#### node <id\> <cmd\> <args...\>  
+
+
+
+
+#### connect <id\> <ids\>  
+
+
+
+
+
+#### inject <id\> <cmd\> <args...\>  
