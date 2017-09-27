@@ -47,5 +47,5 @@ This component reproduces every line, executing the indicated command (one time 
 [Controller](https://github.com/ReiKratos/Operating-Systems/blob/master/StreamProcessing/controlador.c)
 ==========
 
-# Possible Commands  
-## node <id>  <cmd> <args...>  
+### Possible Commands  
+#### node <id> <cmd> <args...> 
