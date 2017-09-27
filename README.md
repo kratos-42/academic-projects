@@ -24,8 +24,9 @@ Just like the name of the project is saying, we are dealing with stream processi
 Const
 -----
 
-Reproduces every line, adding a new collumn with a constant value at the end.
-**Example**: 
-const 10 
-![Alt text](/home/kratos/Desktop/imagem.jpg")
+Reproduces every line, adding a new collumn with a constant value at the end.  
+**Example**:  
+const 10   
+![alt tag](http://url/to/img.png)
+
 
