@@ -31,6 +31,15 @@ Reproduces every line, adding a new collumn with a constant value at the end.
 Filter
 ------
 
-Reprouces every line that satisfies the indicated predicate.
-**Example**: filter 2 < 4
-![inout]()
+Reprouces every line that satisfies the indicated predicate.  
+**Example**: filter 2 < 4  
+![inout](https://github.com/ReiKratos/Operating-Systems/blob/master/StreamProcessing/filter.png)  
+
+
+Spawn
+-----
+
+This component reproduces every line, executing the indicated command (one time for each line), adding a new collumn containing correspondent exit status. To specify the collumn(s) as argument of the command in use, the symbol '$' must appear before the number of the collumn(s) desired.  
+**Example**: spawn ls -a $1 (command: ls, where arguments are an option and an other option or directory, depending what is on the collumn 1)  
+![inout](https://github.com/ReiKratos/Operating-Systems/blob/master/StreamProcessing/spawn.png)  
+
