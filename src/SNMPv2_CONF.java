@@ -19,16 +19,13 @@ import org.snmp4j.agent.mo.snmp.tc.*;
 //--AgentGen BEGIN=_IMPORT
 //--AgentGen END
 
-public class SNMPv2-TC 
-//--AgentGen BEGIN=_EXTENDS
-//--AgentGen END
-implements MOGroup 
+public class SNMPv2_CONF implements MOGroup
 //--AgentGen BEGIN=_IMPLEMENTS
 //--AgentGen END
 {
 
   private static final LogAdapter LOGGER = 
-      LogFactory.getLogger(SNMPv2-TC.class);
+      LogFactory.getLogger(SNMPv2_CONF.class);
 
 //--AgentGen BEGIN=_STATIC
 //--AgentGen END
@@ -43,7 +40,7 @@ implements MOGroup
    * OID of this MIB module for usage which can be 
    * used for its identification.
    */
-  public static final OID oidSNMPv2Tc =
+  public static final OID oidSNMPv2Conf =
     new OID(new int[] {  });
 
   // Identities
@@ -68,18 +65,18 @@ implements MOGroup
 //--AgentGen END
 
   /**
-   * Constructs a SNMPv2-TC instance without actually creating its
+   * Constructs a SNMPv2-CONF instance without actually creating its
    * <code>ManagedObject</code> instances. This has to be done in a
    * sub-class constructor or after construction by calling 
    * {@link #createMO(MOFactory moFactory)}. 
    */
-  protected SNMPv2-TC() {
+  protected SNMPv2_CONF() {
 //--AgentGen BEGIN=_DEFAULTCONSTRUCTOR
 //--AgentGen END
   }
 
   /**
-   * Constructs a SNMPv2-TC instance and actually creates its
+   * Constructs a SNMPv2-CONF instance and actually creates its
    * <code>ManagedObject</code> instances using the supplied 
    * <code>MOFactory</code> (by calling
    * {@link #createMO(MOFactory moFactory)}).
@@ -87,7 +84,7 @@ implements MOGroup
    *    the <code>MOFactory</code> to be used to create the
    *    managed objects for this module.
    */
-  public SNMPv2-TC(MOFactory moFactory) {
+  public SNMPv2_CONF(MOFactory moFactory) {
   	this();
     createMO(moFactory);
 //--AgentGen BEGIN=_FACTORYCONSTRUCTOR
@@ -139,7 +136,7 @@ implements MOGroup
 //--AgentGen BEGIN=_METHODS
 //--AgentGen END
 
-  // Textual Definitions of MIB module SNMPv2-TC
+  // Textual Definitions of MIB module SNMPv2-CONF
   protected void addTCsToFactory(MOFactory moFactory) {
   }
 

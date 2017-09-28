@@ -1,0 +1,5 @@
+Ficha 3 - XPATH 
+
+b - //doc[contains(tit, 'Jesus')]/prov
+c - //doc[contains(local, 'Castelo Branco')]/tit
+

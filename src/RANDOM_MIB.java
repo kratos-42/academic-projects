@@ -8,18 +8,19 @@ import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.agent.*;
 import org.snmp4j.agent.mo.*;
 import org.snmp4j.agent.mo.snmp.*;
-import org.snmp4j.agent.mo.snmp.smi.*;
 import org.snmp4j.agent.request.*;
 import org.snmp4j.log.LogFactory;
 import org.snmp4j.log.LogAdapter;
-import org.snmp4j.agent.mo.snmp.tc.*;
 
+import java.io.*;
+import java.text.ParseException;
+import org.snmp4j.smi.OctetString;
 
 
 //--AgentGen BEGIN=_IMPORT
 //--AgentGen END
 
-public class RANDOM-MIB 
+public class RANDOM_MIB
 //--AgentGen BEGIN=_EXTENDS
 //--AgentGen END
 implements MOGroup 
@@ -28,7 +29,7 @@ implements MOGroup
 {
 
   private static final LogAdapter LOGGER = 
-      LogFactory.getLogger(RANDOM-MIB.class);
+      LogFactory.getLogger(RANDOM_MIB.class);
 
 //--AgentGen BEGIN=_STATIC
 //--AgentGen END
@@ -70,10 +71,15 @@ implements MOGroup
   private static final String TC_DISPLAYSTRING = "DisplayString";
 
   // Scalars
-  private MOScalar<Integer32> frequencia;
+  private MOScalar<Integer32> frequencia ;
   private MOScalar<Integer32> numEntradas;
   private MOScalar<Integer32> numDigitosH;
   private MOScalar<OctetString> reset;
+
+  private String seed;
+  private int[] valoresEscalares = new int[100];
+  private int port;
+  private String community;
 
   // Tables
   public static final OID oidUnpredictableEntry = 
@@ -113,7 +119,7 @@ implements MOGroup
    * sub-class constructor or after construction by calling 
    * {@link #createMO(MOFactory moFactory)}. 
    */
-  protected RANDOM-MIB() {
+  protected RANDOM_MIB() {
 //--AgentGen BEGIN=_DEFAULTCONSTRUCTOR
 //--AgentGen END
   }
@@ -127,7 +133,7 @@ implements MOGroup
    *    the <code>MOFactory</code> to be used to create the
    *    managed objects for this module.
    */
-  public RANDOM-MIB(MOFactory moFactory) {
+  public RANDOM_MIB(MOFactory moFactory) throws IOException, ParseException {
   	this();
     createMO(moFactory);
 //--AgentGen BEGIN=_FACTORYCONSTRUCTOR
@@ -144,21 +150,24 @@ implements MOGroup
    *    the <code>MOFactory</code> instance to use for object 
    *    creation.
    */
-  protected void createMO(MOFactory moFactory) {
+  protected void createMO(MOFactory moFactory) throws IOException, ParseException{
+    loadConfig();
+
     addTCsToFactory(moFactory);
     frequencia = 
       moFactory.createScalar(oidFrequencia,
                              moFactory.createAccess(MOAccessImpl.ACCESSIBLE_FOR_READ_ONLY), 
-                             new Integer32());
+                             new Integer32(valoresEscalares[0]));
     numEntradas = 
       moFactory.createScalar(oidNumEntradas,
                              moFactory.createAccess(MOAccessImpl.ACCESSIBLE_FOR_READ_ONLY), 
-                             new Integer32());
+                             new Integer32(valoresEscalares[1]));
     numDigitosH = 
       moFactory.createScalar(oidNumDigitosH,
                              moFactory.createAccess(MOAccessImpl.ACCESSIBLE_FOR_READ_ONLY), 
-                             new Integer32());
-    reset = 
+                             new Integer32(valoresEscalares[2]));
+
+    reset =
       new Reset(oidReset, 
                 moFactory.createAccess(MOAccessImpl.ACCESSIBLE_FOR_READ_WRITE));
     reset.addMOValueValidationListener(new ResetValidator());
@@ -185,7 +194,7 @@ implements MOGroup
 
 
   @SuppressWarnings(value={"unchecked"})
-  private void createUnpredictableEntry(MOFactory moFactory) {
+  private void createUnpredictableEntry(MOFactory moFactory) throws ParseException, IOException{
     // Index definition
     unpredictableEntryIndexes = 
       new MOTableSubIndex[] {
@@ -202,20 +211,21 @@ implements MOGroup
      //--AgentGen END
         return isValidIndex;
       }
+
     });
 
     // Columns
     MOColumn[] unpredictableEntryColumns = new MOColumn[2];
     unpredictableEntryColumns[idxIndice] = 
-      moFactory.createColumn(colIndice, 
+      moFactory.createColumn(colIndice,
                              SMIConstants.SYNTAX_INTEGER32,
                              moFactory.createAccess(MOAccessImpl.ACCESSIBLE_FOR_READ_ONLY));
     unpredictableEntryColumns[idxValueH] = 
-      moFactory.createColumn(colValueH, 
+      moFactory.createColumn(colValueH,
                              SMIConstants.SYNTAX_OCTET_STRING,
                              moFactory.createAccess(MOAccessImpl.ACCESSIBLE_FOR_READ_ONLY),
-                             tcModuleSNMPv2Tc,
-                             tcDefDisplayString);
+                             TC_MODULE_SNMPV2_TC,
+                             TC_DISPLAYSTRING);
     // Table model
     unpredictableEntryModel = 
       moFactory.createTableModel(oidUnpredictableEntry,
@@ -223,11 +233,59 @@ implements MOGroup
                                  unpredictableEntryColumns);
     ((MOMutableTableModel<UnpredictableEntryRow>)unpredictableEntryModel).setRowFactory(
       new UnpredictableEntryRowFactory());
+
     unpredictableEntry = 
       moFactory.createTable(oidUnpredictableEntry,
                             unpredictableEntryIndex,
                             unpredictableEntryColumns,
                             unpredictableEntryModel);
+
+
+
+
+    Variable[] var = new Variable[1000];
+    OID newOID;
+    BufferedReader rd;
+    File file = new File(seed);
+    int i = 1;
+
+    try{
+      rd = new BufferedReader(new FileReader(file));
+      String line;
+      while ((line = rd.readLine()) != null  && i < 1000) {
+
+
+        var[i] = new OctetString(line);
+        newOID = new OID("" + "." + i);
+
+        UnpredictableEntryRow row = ((MOMutableTableModel<UnpredictableEntryRow>) unpredictableEntryModel).
+                createRow(newOID, new Variable[]{new Integer32(i), new OctetString(line)});
+        if(row == null)
+          System.out.println("foodz");
+
+        System.out.println(row);
+        ((MOMutableTableModel<UnpredictableEntryRow>) unpredictableEntryModel).addRow(row);
+        i++;
+      }
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
+  }
+
+
+
+  public void loadSeed(String seed, Variable[] var) throws IOException{
+    File file = new File(seed);
+    int i = 0;
+    BufferedReader rd = new BufferedReader(new FileReader(file));
+    String line = rd.readLine();
+    while (line != null && i < 1000){
+      var[i] = new OctetString(line);
+      i++;
+      line = rd.readLine();
+    }
+
   }
 
 
@@ -339,7 +397,9 @@ implements MOGroup
      //--AgentGen BEGIN=unpredictableEntry::getIndice
      //--AgentGen END
       return (Integer32) super.getValue(idxIndice);
-    }  
+    }
+
+
     
     public void setIndice(Integer32 newColValue) {
      //--AgentGen BEGIN=unpredictableEntry::setIndice
@@ -394,6 +454,14 @@ implements MOGroup
   class UnpredictableEntryRowFactory 
         implements MOTableRowFactory<UnpredictableEntryRow>
   {
+
+    /*public UnpredictableEntryRowFactory(){
+      OctetString value = new OctetString("123");
+      Variable[] variavel = new Variable[20];
+      variavel[0] = value;
+      createRow(oidUnpredictableEntry, variavel);
+    }
+*/
     public synchronized UnpredictableEntryRow createRow(OID index, Variable[] values)
         throws UnsupportedOperationException 
     {
@@ -403,7 +471,7 @@ implements MOGroup
      //--AgentGen END
       return row;
     }
-    
+
     public synchronized void freeRow(UnpredictableEntryRow row) {
      //--AgentGen BEGIN=unpredictableEntry::freeRow
      //--AgentGen END
@@ -438,17 +506,49 @@ implements MOGroup
 
 //--AgentGen BEGIN=_END
 //--AgentGen END
+
+  public void loadConfig() throws IOException {
+
+    File file = new File("path/to/config.txt");
+    BufferedReader br = new BufferedReader(new FileReader(file));
+    String[] parametros;
+
+    try {
+      String line = br.readLine();
+
+      while (line != null) {
+        parametros = line.split(" ");
+        switch (parametros[0]) {
+          case "UDP-PORT":
+            port = Integer.valueOf(parametros[1]);
+            break;
+
+          case "COMMUNITY-STRING":
+            community = parametros[1];
+            break;
+
+          case "REFRESH-RATE":
+            valoresEscalares[0] = Integer.valueOf(parametros[1]);
+            break;
+
+          case "TABLE-SIZE":
+            valoresEscalares[1] = Integer.valueOf(parametros[1]);
+            break;
+
+          case "NUMBER-SIZE":
+            valoresEscalares[2] = Integer.valueOf(parametros[1]);
+
+          case "FIRST-SEED":
+            seed = parametros[1];
+            break;
+        }
+        line = br.readLine();
+
+      }
+    } catch (IOException e) {
+    }
+  }
+
 }
 
-public void parser(){
-        BufferedReader br = new BufferedReader(new FileReader("config.txt"));
-        String[] part;
-        try{
-        StringBuilder sb = new StringBuilder();
-        String line = br.readLine();
 
-        while(line != null){
-        part.split(" ");
-        }
-        }
-}
