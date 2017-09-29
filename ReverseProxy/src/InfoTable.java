@@ -8,20 +8,26 @@ import java.sql.Timestamp;
 public class InfoTable {
 
     Timestamp rtt;
-    double taxaPacotesPerdidos;
-    int nrConexoes;
+    double packetLossRate;
+    int nrConnections;
     Timestamp timeStart;
     int in;
     int out;
 
 
-    public InfoTable(Timestamp r, double tpp, int nrc, int in, int out){
+    public InfoTable(Timestamp r, double prl, int nrc, int in, int out){
 
         this.rtt = r;
-        this.taxaPacotesPerdidos = tpp;
-        this.nrConexoes = nrc;
+        this.packetLossRate = prl;
+        this.nrConnections = nrc;
         this.in = in;
         this.out = out;
+    }
+
+    public void infoUpdate(Timestamp r, double prl, int nr){
+        this.rtt = r;
+        this.packetLossRate = prl;
+        this.nrConnections = nr;
     }
 
     public InfoTable(){
@@ -36,20 +42,20 @@ public class InfoTable {
         this.rtt = rtt;
     }
 
-    public double getTaxaPacotesPerdidos() {
-        return taxaPacotesPerdidos;
+    public double getPacketLossRate() {
+        return packetLossRate;
     }
 
-    public void setTaxaPacotesPerdidos(double taxaPacotesPerdidos) {
-        this.taxaPacotesPerdidos = taxaPacotesPerdidos;
+    public void setPacketLossRate(double packetLossRate) {
+        this.packetLossRate = packetLossRate;
     }
 
     public int getNrConexoes() {
-        return nrConexoes;
+        return nrConnections;
     }
 
-    public void setNrConexoes(int nrConexoes) {
-        this.nrConexoes = nrConexoes;
+    public void setNrConexoes(int nrConnections) {
+        this.nrConnections = nrConnections;
     }
 
     public int getIn() {
@@ -80,7 +86,7 @@ public class InfoTable {
     }
 
     public void updateNrConexoes(){
-        this.nrConexoes++;
+        this.nrConnections++;
     }
 
 
