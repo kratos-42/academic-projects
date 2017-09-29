@@ -1,9 +1,0 @@
-
-
-
-
-
-int modelo_plano()
-
-
-
