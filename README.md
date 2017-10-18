@@ -60,3 +60,10 @@ This component reproduces every line, executing the indicated command (one time 
 
 
 #### inject <id\> <cmd\> <args...\>  
+
+
+### Example
+
+To better explain how this net of processes is working let's take a look on the following example:
+
+![inout](https://user-images.githubusercontent.com/12373116/31716940-ec7d95ca-b401-11e7-9c5c-35dbcd8a74cc.png)
