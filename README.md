@@ -67,3 +67,11 @@ This component reproduces every line, executing the indicated command (one time 
 To better explain how this net of processes is working let's take a look on the following example:
 
 ![inout](https://user-images.githubusercontent.com/12373116/31716940-ec7d95ca-b401-11e7-9c5c-35dbcd8a74cc.png)
+
+####Controller
+>node 1 const 10
+>node 2 <cmd\> <args\>
+>connect 1 2
+>inject 1 echo msg
+
+So, for each node we got 2 namedpipes (FIFOinID and FIFOoutID) to receive and to send, respectively. Hence, it's also created a process to read from FIFO and send the stream to the main process (the node) using an unnamed pipe; and a process just to read from the FIFOout and deliver that stream to all ohters connected nodes' FIFOin.
