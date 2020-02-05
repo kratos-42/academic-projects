@@ -1,8 +1,0 @@
-﻿Para a implementação  da esfera o gerador irá receber (para além do nome do ficheiro para onde serão escritas as coordenadas) o Raio, o número de cortes a ser feitos verticalmente e o número de cortes a ser feitos horizontalmente. Para desenhar esta primitiva, utilizaram-se coordenadas esféricas as quais dependem de dois ângulos, θ e Φ, pertencentes aos intervalos de domínio [0,2π] e [0,π], respetivamente. Assim, estes ângulos vão variando de acordo com os saltos verticais e horizontais. No caso de  θ, o salto é a razão entre  2π e o número de camadas horizontais; No caso de  Φ, o salto é a razão entre π e as camadas verticais. 
-
-
-
-
-
-
-O ciclo exterior mantêm-se fixo até que as camadas verticais sejam completas, ou seja, o ângulo  θ vai variando dado que diz respeito à abertura 
