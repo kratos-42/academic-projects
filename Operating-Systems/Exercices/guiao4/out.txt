@@ -1,0 +1,9 @@
+a.out
+erros.txt
+ex1.c
+ex2.c
+ex3.c
+ex4.c
+ex4v2.c
+out.txt
+redir
