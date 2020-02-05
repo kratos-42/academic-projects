@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/gerador.dir/gerador.cpp.o CMakeFiles/gerador.dir/Ponto.cpp.o CMakeFiles/gerador.dir/Patch.cpp.o  -o gerador  -L-fpermissive -Wl,-rpath,-fpermissive -rdynamic -lGLEW -lGLU -lGL -lglut -lXmu -lXi 
