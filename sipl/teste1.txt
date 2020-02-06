@@ -1,0 +1,23 @@
+INICIO
+
+    INT FIBZ
+    INT FIBU
+
+    INT TMP
+
+CORPO
+
+    FIBZ = 0;
+    FIBU = 1;
+
+
+    WHILE(FIBU < 1000)
+        TMP = FIBU;
+
+        FIBU = FIBZ + FIBU;
+        FIBZ = FIBU;
+
+    ENDWHILE;
+
+
+FIM
